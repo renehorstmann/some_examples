@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(some C)
+project(some_examples C)
 
 # Optional definitions set:
 # OPTION_GLES           for OpenGLES3.0 instead of OpenGL3.3
@@ -33,7 +33,7 @@ file(GLOB SRCS
         "${PROJECT_SOURCE_DIR}/src/p/*"
         )
 
-add_executable(some ${SRCS})
+add_executable(some_examples ${SRCS})
 
 # check platform
 if (MINGW)
@@ -57,7 +57,7 @@ endif()
 # all platforms:
 add_definitions(-DOPTION_SOCKET)
 add_definitions(-DOPTION_TTF)
-target_link_libraries(some m)
+target_link_libraries(some_examples m)
 
 # windows
 if (PLATFORM_MINGW)
@@ -73,7 +73,7 @@ if (PLATFORM_MINGW)
     find_library(GLEW_LIB glew32 REQUIRED)
     find_library(GLU_LIB glu32 REQUIRED)
 
-    target_link_libraries(some m
+    target_link_libraries(some_examples m
             mingw32
             SDL2main
             SDL2
@@ -97,7 +97,7 @@ if (PLATFORM_UNIX)
 
     find_library(GL_LIB GL REQUIRED)
 
-    target_link_libraries(some
+    target_link_libraries(some_examples
             ${SDL2_LIBRARIES}
             ${SDL2_IMAGE_LIBRARIES}
             ${SDL2_NET_LIBRARIES}
@@ -109,7 +109,7 @@ if (PLATFORM_UNIX)
     find_library(GLEW_LIB GLEW)
     if (GLEW_LIB)
         add_definitions(-DOPTION_GLEW)
-        target_link_libraries(some ${GLEW_LIB})
+        target_link_libraries(some_examples ${GLEW_LIB})
     endif ()
 endif()
 
@@ -131,7 +131,7 @@ if (PLATFORM_MOBILE)
 
     find_library(GLES_LIB GLESv3 REQUIRED)
 
-    target_link_libraries(some
+    target_link_libraries(some_examples
             ${SDL2_LIBRARIES}
             ${SDL2_IMAGE_LIBRARIES}
             ${SDL2_NET_LIBRARIES}
