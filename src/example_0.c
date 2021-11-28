@@ -67,7 +67,7 @@ void example_0_update(float dtime) {
     // pose from center_x, center_y, width, height
     L.object.rect.pose = u_pose_new(x, y, 20, 20);
     
-    /* alternative way to set the homogenoes pose matrix, does exactly the same
+    /* alternative way to set the homogeneous pose matrix, does exactly the same
     L.object.rect.pose = (mat4) {{
         20, 0, 0, 0,
         0, 20, 0, 0,
