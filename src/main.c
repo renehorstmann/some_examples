@@ -9,6 +9,8 @@
 
 #define EXAMPLES 8
 
+#include "example_0.h"
+
 static struct {
     eWindow *window;
     eInput *input;
@@ -16,7 +18,7 @@ static struct {
     rRender *render;
 
     void (*update_fun)(float dtime);
-    void (*render_fun)();
+    void (*render_fun)(const mat4 *cam);
 
     Camera_s camera;
     
@@ -35,7 +37,7 @@ static void main_loop(float delta_time);
 static void example_select_init();
 static void example_select_kill();
 static void example_select_update(float dtime);
-static void example_select_render();
+static void example_select_render(const mat4 *cam);
 
 int main(int argc, char **argv) {
     log_info("some_examples");
@@ -83,6 +85,9 @@ static void main_loop(float delta_time) {
 
     // e updates
     e_input_update(L.input);
+    
+    // simulate
+    camera_update(&L.camera, window_size.x, window_size.y);
 
     // virtual update function
     L.update_fun(delta_time);
@@ -91,7 +96,7 @@ static void main_loop(float delta_time) {
     r_render_begin_frame(L.render, window_size.x, window_size.y);
 
     // virtual render function
-    L.render_fun();
+    L.render_fun(&L.camera.matrices.vp);
    
     // clone the current framebuffer into r_render.framebuffer_tex
     r_render_blit_framebuffer(L.render, window_size.x, window_size.y);
@@ -109,7 +114,15 @@ static void example_select_pointer_callback(ePointer_s pointer, void *ud) {
    
    for(int i=0; i<EXAMPLES; i++) {
        if(button_clicked(&L.buttons.rects[i], pointer)) {
-           
+           example_select_kill();
+           switch(i) {
+           case 0:
+               example_0_init();
+               L.update_fun = example_0_update;
+               L.render_fun = example_0_render;
+               return;
+           }
+           assume(false, "invalid example?");
        }
    }
 }
@@ -144,11 +157,6 @@ static void example_select_kill() {
 }
 
 static void example_select_update(float dtime) {
-    ivec2 window_size = e_window_get_size(L.window);
-
-    // simulate
-    camera_update(&L.camera, window_size.x, window_size.y);
-    
     // text position is (unlike most render objects) in the top left (instead of the centre)
     u_pose_set_xy(&L.info.pose, -48, 90);
     
@@ -165,15 +173,13 @@ static void example_select_update(float dtime) {
     ro_batch_update(&L.buttons);
 }
 
-static void example_select_render() {
-    mat4 *cam_mat = &L.camera.matrices.vp;
-     
-    ro_text_render(&L.info, cam_mat);
+static void example_select_render(const mat4 *cam) {
+    ro_text_render(&L.info, cam);
      
      // buttons
-    ro_batch_render(&L.buttons, cam_mat);
+    ro_batch_render(&L.buttons, cam);
     for(int i=0; i<EXAMPLES; i++) {
-        ro_text_render(&L.button_text[i], cam_mat);
+        ro_text_render(&L.button_text[i], cam);
     }
 }
 
