@@ -7,7 +7,7 @@
 #include "camera.h"
 #include "button.h"
 
-#define EXAMPLES 8
+#define EXAMPLES 1
 
 #include "example_0.h"
 
