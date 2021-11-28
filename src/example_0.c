@@ -1,4 +1,4 @@
-#include "example_0.h"
+#include "examples.h"
 //
 // the first rect
 //

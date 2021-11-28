@@ -7,9 +7,9 @@
 #include "camera.h"
 #include "button.h"
 
-#define EXAMPLES 1
+#define EXAMPLES 2
 
-#include "example_0.h"
+#include "examples.h"
 
 static struct {
     eWindow *window;
@@ -120,6 +120,11 @@ static void example_select_pointer_callback(ePointer_s pointer, void *ud) {
                example_0_init();
                L.update_fun = example_0_update;
                L.render_fun = example_0_render;
+               return;
+           case 1:
+               example_1_init();
+               L.update_fun = example_1_update;
+               L.render_fun = example_1_render;
                return;
            }
            assume(false, "invalid example?");
