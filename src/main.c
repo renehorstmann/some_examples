@@ -1,8 +1,25 @@
-#include "e/e.h"
-#include "r/r.h"
-#include "u/u.h"
-#include "rhc/rhc.h"
-#include "mathc/mathc.h"
+//
+// this file is the entry point into the some_examples app (including int main)
+// if you want to learn, how to use the some framework,
+// first have a look at the example_*.c files
+//
+
+// eSimple initializes the some framework in an easy to use way
+#include "e/simple.h"
+
+// RoText and RoBatch render objects
+#include "r/ro_text.h"
+#include "r/ro_batch.h"
+
+// load textures into the gpu
+#include "r/texture.h"
+
+// some is mainly 2D, but uses 3D poses as 4x4 matrix (mat4)
+// this module helps to build such poses
+#include "u/pose.h"
+
+// rhc error stuff like assume (assert in runtime)
+#include "rhc/error.h"
 
 #include "camera.h"
 #include "button.h"
@@ -11,12 +28,11 @@
 
 #include "examples.h"
 
+// variables used in main
 static struct {
-    eWindow *window;
-    eInput *input;
-    eGui *gui;
-    rRender *render;
+    eSimple *simple;
 
+    // each example has an init, an update and a render function
     void (*update_fun)(float dtime);
     void (*render_fun)(const mat4 *cam);
 
@@ -27,85 +43,52 @@ static struct {
     RoBatch buttons;
     RoText button_text[EXAMPLES];
 } L;
+// 'L'ocal data
 
 
-
-
-
-static void main_loop(float delta_time);
 
 static void example_select_init();
 static void example_select_kill();
 static void example_select_update(float dtime);
 static void example_select_render(const mat4 *cam);
 
-int main(int argc, char **argv) {
-    log_info("some_examples");
 
-    // init e (environment)
-    L.window = e_window_new("some_examples");
-    L.input = e_input_new(L.window);
-    L.gui = e_gui_new(L.window);
-    
-    ivec2 window_size = e_window_get_size(L.window);
-
-    // init r (render)
-    L.render = r_render_new(e_window_get_sdl_window(L.window));
-    
-    // the startup screen acts as loading screen and also checks for render errors
-    r_render_show_startup(L.render,
-            window_size.x, window_size.y,
-            1.0, // block time
-            "Horsimann");
+// this function will be called at the start of the app
+static void init(eSimple *simple, ivec2 window_size) {
+    // catch eSimple for the pointer callback
+    // eSimple is always the same instance
+    L.simple = simple;
 
     // init systems
     L.camera = camera_new();
-    
+
+    // see below
     example_select_init();
-    
-    
+
     L.update_fun = example_select_update;
     L.render_fun = example_select_render;
-    
-    // start the main loop, blocking call
-    e_window_main_loop(L.window, main_loop);
-
-    // clean up
-    r_render_kill(&L.render);
-    e_gui_kill(&L.gui);
-    e_input_kill(&L.input);
-    e_window_kill(&L.window);
-
-    return 0;
 }
 
-
-static void main_loop(float delta_time) {
-    ivec2 window_size = e_window_get_size(L.window);
-
-    // e updates
-    e_input_update(L.input);
-    
+// this functions is called either each frame or at a specific update/s time
+static void update(eSimple *simple, ivec2 window_size, float delta_time) {
     // simulate
-    camera_update(&L.camera, window_size.x, window_size.y);
+    camera_update(&L.camera, window_size);
 
     // virtual update function
     L.update_fun(delta_time);
 
-    // render
-    r_render_begin_frame(L.render, window_size.x, window_size.y);
+}
+
+
+// this function is calles each frame to render stuff
+static void render(eSimple *simple, ivec2 window_size) {
+    mat4 *camera_mat = &L.camera.matrices.vp;
 
     // virtual render function
     L.render_fun(&L.camera.matrices.vp);
-   
+
     // clone the current framebuffer into r_render.framebuffer_tex
-    r_render_blit_framebuffer(L.render, window_size.x, window_size.y);
-
-    // renders the debug gui windows
-    e_gui_render(L.gui);
-
-    // swap buffers
-    r_render_end_frame(L.render);
+    r_render_blit_framebuffer(simple->render, window_size);
 }
 
 
@@ -135,7 +118,7 @@ static void example_select_pointer_callback(ePointer_s pointer, void *ud) {
 
 static void example_select_init() {
     // setup a pointer listener
-    e_input_register_pointer_event(L.input, example_select_pointer_callback, NULL);
+    e_input_register_pointer_event(L.simple->input, example_select_pointer_callback, NULL);
     
     L.info = ro_text_new_font55(32);
     ro_text_set_text(&L.info, "some examples");
@@ -152,7 +135,7 @@ static void example_select_init() {
 }
 
 static void example_select_kill() {
-    e_input_unregister_pointer_event(L.input, example_select_pointer_callback);
+    e_input_unregister_pointer_event(L.simple->input, example_select_pointer_callback);
     
     ro_text_kill(&L.info);
     ro_batch_kill(&L.buttons);
@@ -186,5 +169,13 @@ static void example_select_render(const mat4 *cam) {
     for(int i=0; i<EXAMPLES; i++) {
         ro_text_render(&L.button_text[i], cam);
     }
+}
+
+int main(int argc, char **argv) {
+    // starts the some framework in an easy way
+    e_simple_start("some examples", "Horsimann",
+                   0, // updates/s, <=0 to turn off and use fps
+                   init, update, render);
+    return 0;
 }
 
