@@ -24,8 +24,6 @@
 #include "camera.h"
 #include "button.h"
 
-#define EXAMPLES 2
-
 #include "examples.h"
 
 // variables used in main
@@ -41,7 +39,7 @@ static struct {
     // example select
     RoText info;
     RoBatch buttons;
-    RoText button_text[EXAMPLES];
+    RoText button_text[EXAMPLE_NUM];
 } L;
 // 'L'ocal data
 
@@ -95,7 +93,7 @@ static void render(eSimple *simple, ivec2 window_size, float dtime) {
 static void example_select_pointer_callback(ePointer_s pointer, void *ud) {
    pointer.pos = mat4_mul_vec(L.camera.matrices.v_p_inv, pointer.pos);
    
-   for(int i=0; i<EXAMPLES; i++) {
+   for(int i=0; i<EXAMPLE_NUM; i++) {
        if(button_clicked(&L.buttons.rects[i], pointer)) {
            example_select_kill();
            switch(i) {
@@ -123,12 +121,12 @@ static void example_select_init() {
     L.info = ro_text_new_font55(32);
     ro_text_set_text(&L.info, "some examples");
     
-    L.buttons = ro_batch_new(EXAMPLES, r_texture_new_file(2, 1, "res/big_btn.png"));
+    L.buttons = ro_batch_new(EXAMPLE_NUM, r_texture_new_file(2, 1, "res/big_btn.png"));
     
-    for(int i=0; i<EXAMPLES; i++) {
+    for(int i=0; i<EXAMPLE_NUM; i++) {
         L.button_text[i] = ro_text_new_font85(32);
         char text[32];
-        snprintf(text, 32, "Example: %i", i);
+        snprintf(text, 32, "%i: %s", i, example_titles[i]);
         ro_text_set_text(&L.button_text[i], text);
         ro_text_set_color(&L.button_text[i], R_COLOR_BLACK);
     }
@@ -139,7 +137,7 @@ static void example_select_kill() {
     
     ro_text_kill(&L.info);
     ro_batch_kill(&L.buttons);
-    for(int i=0; i<EXAMPLES; i++) {
+    for(int i=0; i<EXAMPLE_NUM; i++) {
         ro_text_kill(&L.button_text[i]);
     }
 }
@@ -148,12 +146,12 @@ static void example_select_update(float dtime) {
     // text position is (unlike most render objects) in the top left (instead of the centre)
     u_pose_set_xy(&L.info.pose, -48, 90);
     
-    for(int i=0; i<EXAMPLES; i++) {
+    for(int i=0; i<EXAMPLE_NUM; i++) {
         float y = 70-18*i;
         L.buttons.rects[i].pose = u_pose_new(0, y, 128, 16);
         
         u_pose_set_xy(&L.button_text[i].pose, 
-                32-128/2,
+                4-128/2,
                 y + (button_is_pressed(&L.buttons.rects[i])? 4 : 6));
     }
     
@@ -166,7 +164,7 @@ static void example_select_render(const mat4 *cam) {
      
      // buttons
     ro_batch_render(&L.buttons, cam);
-    for(int i=0; i<EXAMPLES; i++) {
+    for(int i=0; i<EXAMPLE_NUM; i++) {
         ro_text_render(&L.button_text[i], cam);
     }
 }
