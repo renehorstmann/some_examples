@@ -154,16 +154,13 @@ static void example_select_update(float dtime) {
                 4-128/2,
                 y + (button_is_pressed(&L.buttons.rects[i])? 4 : 6));
     }
-    
-    // push batch changes into the gpu memory
-    ro_batch_update(&L.buttons);
 }
 
 static void example_select_render(const mat4 *cam) {
     ro_text_render(&L.info, cam);
      
-     // buttons
-    ro_batch_render(&L.buttons, cam);
+    // buttons
+    ro_batch_render(&L.buttons, cam, true);     // true = call ro_batch_update to push the rects to the gpu
     for(int i=0; i<EXAMPLE_NUM; i++) {
         ro_text_render(&L.button_text[i], cam);
     }
