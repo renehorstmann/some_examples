@@ -187,7 +187,7 @@ static void example_select_render(const mat4 *cam) {
 }
 
 int main(int argc, char **argv) {
-    e_simple_start("some examples", "Horsimann",
+    e_simple_start("some_examples", "Horsimann",
                    1.0f,   // startup block time (the time in which "Horsimann" is displayed at startup)
                    0,      // updates/s, <=0 to turn off and use fps
                    init, update, render);
