@@ -22,6 +22,11 @@ static struct {
 
 
 static void pointer_callback(ePointer_s pointer, void *user_data) {
+    
+    // only allow pointer down (start of a click)
+    if(pointer.action != E_POINTER_DOWN)
+        return;
+    
     pointer.pos = mat4_mul_vec(L.cam_ref->matrices.v_p_inv, pointer.pos);
 
     // if the name hitbox is pressed, start the textinput
@@ -51,6 +56,8 @@ void example_5_init(const eWindow *wnd, eInput *input, const Camera_s *cam) {
 void example_5_update(float dtime) {
     // if tge textinput is active, handle it
     if(L.textinput) {
+        
+        // e_window_get_size returns the size in pixel of the render window / canvas
         textinput_update(L.textinput, e_window_get_size(L.wnd_ref), dtime);
         
         // only show ok button for a string length >= 4 chars
@@ -65,6 +72,7 @@ void example_5_update(float dtime) {
         
         // on done or cancel, kill the textinput
         if(L.textinput->out.state != TEXTINPUT_IN_PROGRESS) {
+            // kill also sets L.textinput = NULL
             textinput_kill(&L.textinput);
         }
     }

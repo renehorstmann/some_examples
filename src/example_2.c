@@ -34,6 +34,10 @@ void example_2_init(Camera_s *cam) {
     // L.object = ro_single_new(r_texture_new_file(4, 2, "res/example_2.png"));
     rTexture tex = r_texture_new_file(4, 2, "res/example_2.png");
     L.object = ro_single_new(tex);
+    // the render objects _new constructor takes the textures as _sinj
+    // so the ownership of the texture goes to the render object
+    //    so you must not kill the texture
+    // set L.object.owns_tex to false, to change this behavior
 
     // get the size of the loaded texture (*4)
     // the texture is also set into the render object as L.object.tex
@@ -44,7 +48,7 @@ void example_2_init(Camera_s *cam) {
     // maximal 16 chars
     // RoText has an internal RoBatch to render the chars, so a maximal number is needed to init the batch
     L.text = ro_text_new_font85(16);
-    // the text will be drawn with this pose on its top left. if the size is 1, the font size will be used for(85)
+    // the text will be drawn with this pose on its top left. if the size is 1, the font size will be used (85)
     //      if the size is 2x2, the font size would be 16x10...
     L.text.pose = u_pose_new(-24, -34, 1, 1);
 }

@@ -6,7 +6,7 @@
 // logging functions
 #include "rhc/log.h"
 
-// load save and manipulate images (on web only .png for load and save)
+// load, save and manipulate images (on web only .png for load and save)
 #include "u/image.h"
 
 // save user data or do up and download for web
@@ -60,11 +60,15 @@ static void load_image() {
     rTexture tex = r_texture_new(img.cols, img.rows,
                                  1, 1,  // sprite_cols, sprite_rows
                                  img.data);
+                                 
+    // will kill its old texture and takes the ownership of tex (_sink)
+    //     set L.image_ro.owns_tex to false, to change this behavior
     ro_single_set_texture(&L.image_ro, tex);
 }
 
 // this callback will be called on a succeeded file upload (web only)
-static void upload_callback(const char *file, bool ascii, void *user_data) {
+static void upload_callback(const char *file, bool ascii, const char *user_file_name, void *user_data) {
+    log_info("got a web upload: <%s>", user_file_name);
     load_image();
 }
 
@@ -86,7 +90,6 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
     }
 
     if(button_clicked(&L.btn_down.rect, pointer)) {
-        // log some text, is like a printf function for formatting
         log_info("button download clicked");
 
         // save the current image
@@ -116,8 +119,16 @@ void example_4_init(eInput *input, const Camera_s *cam) {
     ro_text_set_color(&L.btn_down_text, R_COLOR_BLACK);
 
     // an invalid texture will just render black
-    L.image_ro = ro_single_new(r_texture_new_invalid());
-    L.image_ro.rect.pose = u_pose_new(0, 20, 64, 64);
+    L.image = u_image_new_empty(256, 256, 1);
+    for(int r=0; r<L.image.rows; r++) {
+        for(int c=0; c<L.image.cols; c++) {
+            *u_image_pixel(L.image, c, r, 0) = (uColor_s) {{r, c, r-c, 255}};
+        }
+    }
+    L.image_ro = ro_single_new(r_texture_new(L.image.cols, L.image.rows,
+                                             1, 1, // sprite_cols, sprite_rows
+                                             L.image.data));
+    L.image_ro.rect.pose = u_pose_new(0, 20, 120, 100);
 }
 
 void example_4_update(float dtime) {

@@ -39,6 +39,9 @@ void example_3_update(float dtime) {
     ro_text_set_text(&L.text, buf);
 
     // create a color picker debug window to set the clear color of the render module (background color)
+    // r_render_clear_color returns a vec4*
+    // all mathc types can be casted to float*, 
+    //    so the cast to (vec3*) changes its type to match the needed rgb vec3*
     e_gui_rgb("background color", (vec3*) r_render_clear_color(L.render_ref));
 }
 

@@ -56,7 +56,7 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
     
     // if pointer is down (finger starts to touch or the cursors left button starts to click)
     //      search (backwards) in the list of render objects for a pose, that contains the pointer
-    //      (backwards, so that it matched the render ordering, last rendered are displayed on top of the previous)
+    //      (backwards, so that it matches the render ordering, last rendered are displayed on top of the previous)
     if(pointer.action == E_POINTER_DOWN) {
         for(int i=L.objects.num-1; i>=0; i--) {
 
