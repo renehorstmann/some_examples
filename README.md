@@ -23,7 +23,7 @@ mkdir web && cp index.html web && cp icon/* web && cd web
 ```
 
 ```sh
-cp ../res .
+cp -r ../res .
 ```
 
 ```sh
