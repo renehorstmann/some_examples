@@ -127,6 +127,11 @@ static void example_select_pointer_callback(ePointer_s pointer, void *ud) {
                L.update_fun = example_5_update;
                L.render_fun = example_5_render;
                return;
+           case 6:
+               example_6_init(L.simple->input, &L.camera);
+               L.update_fun = example_6_update;
+               L.render_fun = example_6_render;
+               return;
            }
            assume(false, "invalid example?");
        }

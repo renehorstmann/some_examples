@@ -6,7 +6,7 @@
 #include "r/render.h"
 #include "camera.h"
 
-#define EXAMPLE_NUM 6
+#define EXAMPLE_NUM 7
 
 static const char *example_titles[EXAMPLE_NUM] = {
     [0] = "the first rect",
@@ -14,7 +14,8 @@ static const char *example_titles[EXAMPLE_NUM] = {
     [2] = "animation",
     [3] = "nuklear gui",
     [4] = "up 'n download",
-    [5] = "text input"
+    [5] = "text input",
+    [6] = "container"
 };
 
 void example_0_init();
@@ -41,5 +42,8 @@ void example_5_init(const eWindow *wnd, eInput *input, const Camera_s *cam);
 void example_5_update(float dtime);
 void example_5_render(const mat4 *cam);
 
+void example_6_init(eInput *input, const Camera_s *cam);
+void example_6_update(float dtime);
+void example_6_render(const mat4 *cam);
 
 #endif //SOME_EXANPLES_H
