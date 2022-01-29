@@ -3,7 +3,7 @@
 // pointer events
 //
 
-// in examples.h, the following to needed header are imported:
+// in examples.h, the following two needed header are imported:
 // input stuff like pointer events, or keyboard keys pressed, etc.
 //#include "e/input.h"
 // the camera module has the camera matrices and can move the camera
