@@ -3,7 +3,7 @@
 // nuklear gui
 //
 
-// in examples.h, the following to needed header are imported:
+// in examples.h, the following needed header is imported:
 //#include "r/render.h"
 
 // nuklear windows to debug
