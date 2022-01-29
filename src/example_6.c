@@ -4,7 +4,7 @@
 //
 
 
-// in examples.h, the following to needed header are imported:
+// in examples.h, the following two needed header are imported:
 //#include "e/input.h"
 //#include "camera.h"
 
