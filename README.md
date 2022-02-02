@@ -15,18 +15,26 @@ some examples for [some](https://github.com/renehorstmann/some) framework
 6. [container](src/example_6.c)
 
 
+## Install and run on Desktop
+Have a look at the section of [some](https://github.com/renehorstmann/some)
+
+
 ## Compiling for Web
+Using Emscripten https://emscripten.org/
+Tested under Ubuntu and WSL Ubuntu.
+You should have already cloned the project and `cd` to that dir:
 
-Using Emscripten:
-
+- Create a sub directory to compile the website
 ```sh
 mkdir web && cp index.html web && cp icon/* web && cd web
 ```
 
+- Copy all resources, because emscripten may not be able to use `../res`
 ```sh
 cp -r ../res .
 ```
 
+- Compile
 ```sh
 emcc -O3 \
 -I../include/ \
@@ -42,22 +50,11 @@ EXPORTED_FUNCTIONS='["_main", "_e_io_idbfs_synced", "_e_io_file_upload_done"]' \
 -o index.js
 ```
 
-test the website:
+- Test the website (open a browser and call localhost:8000)
 ```sh
 python3 -m http.server --bind localhost  # [port]
 ```
 
-## Without Cmake
-
-Instead of cmake, the following call to gcc may work, too.
-
-```sh
-mkdir build && cd build
-
-cp -r ../res .
-
-gcc ../src/e/*.c ../src/p/*.c ../src/r/*.c ../src/u/*.c ../src/*.c -I../include/ $(sdl2-config --cflags --libs) -lSDL2_image -lSDL2_ttf -lSDL2_net -lglew32 -lopengl32 -lglu32 -DOPTION_GLEW -DOPTION_SDL -DOPTION_TTF -DOPTION_SOCKET -o some_examples
-```
 
 ## Author
 
