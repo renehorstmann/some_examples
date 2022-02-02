@@ -38,6 +38,7 @@ static struct {
     
     // example select
     RoText info;
+    RoText title;
     RoBatch buttons;
     RoText button_text[EXAMPLE_NUM];
 } L;
@@ -143,8 +144,10 @@ static void example_select_init() {
     // setup a pointer listener
     e_input_register_pointer_event(L.simple->input, example_select_pointer_callback, NULL);
     
-    L.info = ro_text_new_font55(32);
-    ro_text_set_text(&L.info, "some examples");
+    L.info = ro_text_new_font55(256);
+    
+    L.title = ro_text_new_font55(32);
+    ro_text_set_text(&L.title, "some examples");
     
     L.buttons = ro_batch_new(EXAMPLE_NUM, r_texture_new_file(2, 1, "res/big_btn.png"));
     
@@ -161,6 +164,7 @@ static void example_select_kill() {
     e_input_unregister_pointer_event(L.simple->input, example_select_pointer_callback);
     
     ro_text_kill(&L.info);
+    ro_text_kill(&L.title);
     ro_batch_kill(&L.buttons);
     for(int i=0; i<EXAMPLE_NUM; i++) {
         ro_text_kill(&L.button_text[i]);
@@ -168,8 +172,18 @@ static void example_select_kill() {
 }
 
 static void example_select_update(float dtime) {
+    ivec2 wnd_size = e_window_get_size(L.simple->window);
+    char buf[256];
+    snprintf(buf, sizeof buf, 
+            "window size:    %i x %i\n"
+            "frames per sec: %.2f",
+            wnd_size.x, wnd_size.y, 
+            L.simple->out.fps);
+    ro_text_set_text(&L.info, buf);
+    
     // text position is (unlike most render objects) in the top left (instead of the centre)
-    u_pose_set_xy(&L.info.pose, -48, 90);
+    u_pose_set_xy(&L.info.pose, -90, 12+L.camera.RO.bottom);
+    u_pose_set_xy(&L.title.pose, -48, 90);
     
     for(int i=0; i<EXAMPLE_NUM; i++) {
         float y = 70-18*i;
@@ -183,6 +197,7 @@ static void example_select_update(float dtime) {
 
 static void example_select_render(const mat4 *cam) {
     ro_text_render(&L.info, cam);
+    ro_text_render(&L.title, cam);
      
     // buttons
     ro_batch_render(&L.buttons, cam, true);     // true = call ro_batch_update to push the rects to the gpu
