@@ -3,6 +3,8 @@
 // container
 //
 
+// to seed rand (the default C random number generator)
+#include <time.h>
 
 // in examples.h, the following two needed header are imported:
 //#include "e/input.h"
