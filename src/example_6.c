@@ -23,7 +23,7 @@
 
 
 // how many colored objects
-#define NUM 32
+#define NUM 36
 
 static struct {
     const Camera_s *cam_ref;
@@ -85,6 +85,12 @@ void example_6_init(eInput *input, const Camera_s *cam) {
 
     // setup the container items
     L.colors = ro_batch_new(NUM, r_texture_new_white_pixel());
+    
+    // seed the C default random number generator (rand)
+    //    so each time the example is loaded, different sizes are generated
+    //    mathc/random uses rand or a user defined rand function
+    srand(time(NULL));
+    
     for (int i = 0; i < NUM; i++) {
         // random size of the color rectangle
         // sca_random_range returns a uniform random value between a and b (8-16)
