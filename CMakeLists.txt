@@ -14,8 +14,9 @@ project(some_examples C)
 #
 # NDEBUG                is used at a few points, too
 # MATHC_NO_PRINT_COLOR  disable colored mathc prints
+# RHC_LOG_DO_NOT_USE_COLOR          dont use colored logs
+# RHC_LOG_DO_NOT_PRINT_TIME_FILE    disable time and file in logs
 # NUKLEAR_SCALE=3.0     for small hd screens (smartphones)
-# RHC_LOG_DO_NOT_PRINT_TIME_FILE disable time and file in logs
 
 set(CMAKE_C_STANDARD 11)
 
@@ -69,9 +70,9 @@ endif()
 
 
 # all platforms:
-add_definitions(-DOPTION_FETCH)
-add_definitions(-DOPTION_SOCKET)
-add_definitions(-DOPTION_TTF)
+#add_definitions(-DOPTION_FETCH)
+#add_definitions(-DOPTION_SOCKET)
+#add_definitions(-DOPTION_TTF)
 target_link_libraries(some_examples m)
 
 # windows
@@ -93,9 +94,10 @@ if (PLATFORM_MINGW)
             SDL2main
             SDL2
             SDL2_image
-            SDL2_net
-            SDL2_ttf
-            curl
+            #SDL2_mixer
+            #SDL2_net
+            #SDL2_ttf
+            #curl
             ${OPENGL_LIB}
             ${GLEW_LIB}
             ${GLU_LIB}
@@ -117,19 +119,21 @@ if (PLATFORM_UNIX)
     
     find_package(SDL2 REQUIRED)
     find_library(SDL2_IMAGE_LIBRARIES SDL2_image REQUIRED)
-    find_library(SDL2_NET_LIBRARIES SDL2_net REQUIRED)
-    find_library(SDL2_TTF_LIBRARIES SDL2_ttf REQUIRED)
+    #find_library(SDL2_MIXER_LIBRARIES SDL2_mixer REQUIRED)
+    #find_library(SDL2_NET_LIBRARIES SDL2_net REQUIRED)
+    #find_library(SDL2_TTF_LIBRARIES SDL2_ttf REQUIRED)
 
-    find_library(CURL_LIBRARIES curl REQUIRED)
+    #find_library(CURL_LIBRARIES curl REQUIRED)
 
     find_library(GL_LIB GL REQUIRED)
 
     target_link_libraries(some_examples
             ${SDL2_LIBRARIES}
             ${SDL2_IMAGE_LIBRARIES}
-            ${SDL2_NET_LIBRARIES}
-            ${SDL2_TTF_LIBRARIES}
-            ${CURL_LIBRARIES}
+            #${SDL2_MIXER_LIBRARIES}
+            #${SDL2_NET_LIBRARIES}
+            #${SDL2_TTF_LIBRARIES}
+            #${CURL_LIBRARIES}
             ${GL_LIB}
     )
 
@@ -147,26 +151,29 @@ if (PLATFORM_MOBILE)
     message("Setup Mobile")
     add_definitions(-DOPTION_GLES)
     add_definitions(-DOPTION_SDL)
-    add_definitions(-DOPTION_GYRO)
+    #add_definitions(-DOPTION_GYRO)
     add_definitions(-DMATHC_NO_PRINT_COLOR)
-    add_definitions(-DNUKLEAR_SCALE=3.0)
+    add_definitions(-DRHC_LOG_DO_NOT_USE_COLOR)
     add_definitions(-DRHC_LOG_DO_NOT_PRINT_TIME_FILE)
+    add_definitions(-DNUKLEAR_SCALE=3.0)
 
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)
-    find_package(SDL2_net REQUIRED)
-    find_package(SDL2_ttf REQUIRED)
+    #find_package(SDL2_mixer REQUIRED)
+    #find_package(SDL2_net REQUIRED)
+    #find_package(SDL2_ttf REQUIRED)
 
-    find_package(CURL REQUIRED)
+    #find_package(CURL REQUIRED)
 
     find_library(GLES_LIB GLESv3 REQUIRED)
 
     target_link_libraries(some_examples
             ${SDL2_LIBRARIES}
             ${SDL2_IMAGE_LIBRARIES}
-            ${SDL2_NET_LIBRARIES}
-            ${SDL2_TTF_LIBRARIES}
-            ${CURL_LIBRARIES}
+            #${SDL2_MIXER_LIBRARIES}
+            #${SDL2_NET_LIBRARIES}
+            #${SDL2_TTF_LIBRARIES}
+            #${CURL_LIBRARIES}
             ${GLES_LIB}
     )
 endif()

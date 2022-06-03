@@ -3,9 +3,6 @@
 // animation
 //
 
-// in examples.h, the following needed header is imported:
-//#include "camera.h"
-
 // imports RoText class and the default fonts 55 and 85
 #include "r/ro_text.h"
 // #include "r/ro_ttftext.h" // can be used to render ttf texts
@@ -14,26 +11,22 @@
 #include "u/color.h"
 
 #include "r/ro_single.h"
-#include "r/texture.h"
 #include "u/pose.h"
 #include "mathc/float.h"
 
-static struct {
-    Camera_s *cam_ref;
+#include "camera.h"
 
+static struct {
     RoSingle object;
     RoText text;
     float angle;
     float time;
-    
+
     // background
     RoSingle bg;
 } L;
 
-void example_2_init(Camera_s *cam) {
-    // hold a reference to the given camera of main.c
-    L.cam_ref = cam;
-
+void example_2_init() {
     // load a texture from the file "res/example_2.png"
     // the texture has 8 sprites in 4 columns and 2 rows
     // alternative way to init:
@@ -47,7 +40,7 @@ void example_2_init(Camera_s *cam) {
 
     // get the size of the loaded texture (*4)
     // the texture is also set into the render object as L.object.tex
-    L.object.rect.pose = u_pose_new(0, 0, 4*tex.sprite_size.x, 4*tex.sprite_size.y);
+    L.object.rect.pose = u_pose_new(0, 0, 4 * tex.sprite_size.x, 4 * tex.sprite_size.y);
 
     // create a new text with the default font85 (per character: 8rows x 5cols)
     //      have a look at the constructor of font55 and font85, if you want to create your own fonts
@@ -57,7 +50,7 @@ void example_2_init(Camera_s *cam) {
     // the text will be drawn with this pose on its top left. if the size is 1, the font size will be used (85)
     //      if the size is 2x2, the font size would be 16x10...
     L.text.pose = u_pose_new(-20, -36, 1, 1);
-    
+
     // background tiles
     // a uColor_s holds 4 bytes 
     //      (typedef of mathc ucvec4 with unsigned char type)
@@ -84,23 +77,23 @@ void example_2_update(float dtime) {
     float y = 60 * sca_sin(L.angle);
 
     // this time, we move the camera instead of the object
-    camera_set_pos(L.cam_ref, x, y);
+    camera_set_pos(x, y);
 
     // swap the sprite row to 1, if the rotation is half done
     // y=0: candle fire is yellow-red, y=1: candle fire is blue
-    L.object.rect.sprite.y = L.angle<M_PI? 0 : 1;
+    L.object.rect.sprite.y = L.angle < M_PI ? 0 : 1;
 
     // animate
     const float fps = 6;    // 4 frames per second
     L.time += dtime;
-    L.time = sca_mod(L.time, 4/fps);    // mod to keep the precision
+    L.time = sca_mod(L.time, 4 / fps);    // mod to keep the precision
     int frame = (int) (L.time * fps);
     L.object.rect.sprite.x = frame;
 
     // ro_text_set_text returns the used size for the text
-    ro_text_set_text(&L.text, L.angle<M_PI? "Red  fire" : "Blue fire");
-    ro_text_set_color(&L.text, L.angle<M_PI? R_COLOR_RED : R_COLOR_BLUE);
-    
+    ro_text_set_text(&L.text, L.angle < M_PI ? "Red  fire" : "Blue fire");
+    ro_text_set_color(&L.text, L.angle < M_PI ? R_COLOR_RED : R_COLOR_BLUE);
+
     // background
     // "world size" = 1024x1024 units
     //     (>=180) + 60 for the camera
@@ -115,11 +108,11 @@ void example_2_update(float dtime) {
     // uv size = 2: repeat 2x
     // uv size = pose.size: repeat texture in each pixel
     // so in order to display each tile with a size of 4 units:
-    float bg_uv_scale = 2*4;
+    float bg_uv_scale = 2 * 4;
     u_pose_set_size(&L.bg.rect.pose, bg_width, bg_height);
-    u_pose_set_size(&L.bg.rect.uv, 
-            bg_width / bg_uv_scale, 
-            bg_height / bg_uv_scale);
+    u_pose_set_size(&L.bg.rect.uv,
+                    bg_width / bg_uv_scale,
+                    bg_height / bg_uv_scale);
 }
 
 void example_2_render(const mat4 *cam) {

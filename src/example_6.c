@@ -6,10 +6,8 @@
 // to seed rand (the default C random number generator)
 #include <time.h>
 
-// in examples.h, the following two needed header are imported:
-//#include "e/input.h"
-//#include "camera.h"
 
+#include "e/input.h"
 #include "r/ro_text.h"
 #include "r/ro_batch.h"
 #include "r/ro_single.h"
@@ -23,13 +21,12 @@
 // imports a container system for stacks and flow container
 #include "u/container.h"
 
+#include "camera.h"
 
 // how many colored objects
 #define NUM 36
 
 static struct {
-    const Camera_s *cam_ref;
-
     // The container manages the positions of its items, according to some rules (mode, alignmend)
     uContainer container;
 
@@ -55,7 +52,7 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
     if (pointer.action != E_POINTER_DOWN)
         return;
 
-    pointer.pos = mat4_mul_vec(L.cam_ref->matrices.v_p_inv, pointer.pos);
+    pointer.pos = mat4_mul_vec(camera.matrices.v_p_inv, pointer.pos);
 
     // if a hitbox is clicked, change its setting
     if (u_pose_aa_contains(L.mode_box, pointer.pos.xy)) {
@@ -75,10 +72,8 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
     }
 }
 
-void example_6_init(eInput *input, const Camera_s *cam) {
-    L.cam_ref = cam;
-
-    e_input_register_pointer_event(input, pointer_callback, NULL);
+void example_6_init() {
+    e_input_register_pointer_event(pointer_callback, NULL);
 
     // create a new container with NUM items, left = -80, top = 80
     L.container = u_container_new(NUM, -80, 80);
@@ -87,12 +82,12 @@ void example_6_init(eInput *input, const Camera_s *cam) {
 
     // setup the container items
     L.colors = ro_batch_new(NUM, r_texture_new_white_pixel());
-    
+
     // seed the C default random number generator (rand)
     //    so each time the example is loaded, different sizes are generated
     //    mathc/random uses rand or a user defined rand function
     srand(time(NULL));
-    
+
     for (int i = 0; i < NUM; i++) {
         // random size of the color rectangle
         // sca_random_range returns a uniform random value between a and b (8-16)

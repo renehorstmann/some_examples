@@ -3,8 +3,8 @@
 // nuklear gui
 //
 
-// in examples.h, the following needed header is imported:
-//#include "r/render.h"
+
+#include "r/render.h"
 
 // nuklear windows to debug
 #include "e/gui.h"
@@ -12,19 +12,13 @@
 #include "r/ro_text.h"
 
 static struct {
-    // a reference to the rRender module, created and used in main.c
-    rRender *render_ref;
-
     float val;
 
     RoText text;
 } L;
 
 
-void example_3_init(rRender *render) {
-    // hold a reference to the given rRender module of main.c
-    L.render_ref = render;
-
+void example_3_init() {
     L.text = ro_text_new_font55(16);
 }
 
@@ -42,7 +36,7 @@ void example_3_update(float dtime) {
     // r_render_clear_color returns a vec4*
     // all mathc types can be casted to float*, 
     //    so the cast to (vec3*) changes its type to match the needed rgb vec3*
-    e_gui_rgb("background color", (vec3*) r_render_clear_color(L.render_ref));
+    e_gui_rgb("background color", (vec3 *) &r_render.clear_color);
 }
 
 void example_3_render(const mat4 *cam) {
