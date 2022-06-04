@@ -35,6 +35,7 @@ static struct {
 // In bigger projects, global data should be avoided
 // and the data should be passed as parameters to the functions
 // (like classes)
+// In apps and games with a smaller scope its totally fine to use this modules-with-globals style
 
 
 void example_0_init() {
