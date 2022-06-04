@@ -33,7 +33,7 @@ void example_2_init() {
     // L.object = ro_single_new(r_texture_new_file(4, 2, "res/example_2.png"));
     rTexture tex = r_texture_new_file(4, 2, "res/example_2.png");
     L.object = ro_single_new(tex);
-    // the render objects _new constructor takes the textures as _sinj
+    // the render objects _new constructor takes the textures as _sink
     // so the ownership of the texture goes to the render object
     //    so you must not kill the texture
     // set L.object.owns_tex to false, to change this behavior
