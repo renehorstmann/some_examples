@@ -84,9 +84,9 @@ void example_2_update(float dtime) {
     L.object.rect.sprite.y = L.angle < M_PI ? 0 : 1;
 
     // animate
-    const float fps = 6;    // 4 frames per second
+    const float fps = 6;    // 6 frames per second
     L.time += dtime;
-    L.time = sca_mod(L.time, 4 / fps);    // mod to keep the precision
+    L.time = sca_mod(L.time, 4 / fps);    // mod to keep the precision (4 frames)
     int frame = (int) (L.time * fps);
     L.object.rect.sprite.x = frame;
 
