@@ -48,10 +48,8 @@ void example_5_init() {
 }
 
 void example_5_update(float dtime) {
-    // if tge textinput is active, handle it
+    // if the textinput is active, handle it
     if (L.textinput) {
-
-        // e_window_get_size returns the size in pixel of the render window / canvas
         textinput_update(L.textinput, dtime);
 
         // only show ok button for a string length >= 4 chars
