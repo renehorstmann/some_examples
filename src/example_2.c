@@ -10,6 +10,9 @@
 // imports uColor_s to create a little background image by hand
 #include "u/color.h"
 
+// imports uAnimator_s class for animation
+#include "u/animator.h"
+
 #include "r/ro_single.h"
 #include "u/pose.h"
 #include "mathc/float.h"
@@ -20,7 +23,9 @@ static struct {
     RoSingle object;
     RoText text;
     float angle;
-    float time;
+    
+    // *_s classes are trivially copyable and dont need to be killed / freed
+    uAnimator_s animator;
 
     // background
     RoSingle bg;
@@ -41,6 +46,9 @@ void example_2_init() {
     // get the size of the loaded texture (*4)
     // the texture is also set into the render object as L.object.tex
     L.object.rect.pose = u_pose_new(0, 0, 4 * tex.sprite_size.x, 4 * tex.sprite_size.y);
+    
+    // animator with 4 frames and 8.0 frames per second
+    L.animator = u_animator_new_fps(4, 8.0);
 
     // create a new text with the default font85 (per character: 8rows x 5cols)
     //      have a look at the constructor of font55 and font85, if you want to create your own fonts
@@ -84,11 +92,10 @@ void example_2_update(float dtime) {
     L.object.rect.sprite.y = L.angle < M_PI ? 0 : 1;
 
     // animate
-    const float fps = 6;    // 6 frames per second
-    L.time += dtime;
-    L.time = sca_mod(L.time, 4 / fps);    // mod to keep the precision (4 frames)
-    int frame = (int) (L.time * fps);
-    L.object.rect.sprite.x = frame;
+    // the animator returns an int for the current frame
+    //    time from e_window.time_ms
+    // sprite.x .y are floats that are casted to integer in the shader
+    L.object.rect.sprite.x = u_animator_frame(L.animator);
 
     // ro_text_set_text returns the used size for the text
     ro_text_set_text(&L.text, L.angle < M_PI ? "Red  fire" : "Blue fire");
