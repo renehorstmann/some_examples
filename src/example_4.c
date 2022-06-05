@@ -53,6 +53,7 @@ void example_4_init() {
         r->speed.x = sca_random_normal(0, 5);
         r->speed.y = sca_random_normal(75, 10);
 
+        // acceleration
         r->acc.y = -10;
 
         // setup start time
