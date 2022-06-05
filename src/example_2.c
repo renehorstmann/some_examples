@@ -78,9 +78,9 @@ void example_2_init() {
 void example_2_update(float dtime) {
 
     // 180° in 4 seconds
-    L.angle += dtime * M_PI / 4;
+    L.angle += dtime * SCA_PI / 4;
 
-    L.angle = sca_mod(L.angle, 2 * M_PI);
+    L.angle = sca_mod(L.angle, 2 * SCA_PI);
     float x = 60 * sca_cos(L.angle);
     float y = 60 * sca_sin(L.angle);
 
@@ -89,7 +89,7 @@ void example_2_update(float dtime) {
 
     // swap the sprite row to 1, if the rotation is half done
     // y=0: candle fire is yellow-red, y=1: candle fire is blue
-    L.object.rect.sprite.y = L.angle < M_PI ? 0 : 1;
+    L.object.rect.sprite.y = L.angle < SCA_PI ? 0 : 1;
 
     // animate
     // the animator returns an int for the current frame
@@ -98,8 +98,8 @@ void example_2_update(float dtime) {
     L.object.rect.sprite.x = u_animator_frame(L.animator);
 
     // ro_text_set_text returns the used size for the text
-    ro_text_set_text(&L.text, L.angle < M_PI ? "Red  fire" : "Blue fire");
-    ro_text_set_color(&L.text, L.angle < M_PI ? R_COLOR_RED : R_COLOR_BLUE);
+    ro_text_set_text(&L.text, L.angle < SCA_PI ? "Red  fire" : "Blue fire");
+    ro_text_set_color(&L.text, L.angle < SCA_PI ? R_COLOR_RED : R_COLOR_BLUE);
 
     // background
     // "world size" = 1024x1024 units

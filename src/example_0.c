@@ -51,11 +51,11 @@ void example_0_update(float dtime) {
     // dtime is the time between frames
 
     // 180° in 2 seconds
-    L.angle += dtime * M_PI / 2;
+    L.angle += dtime * SCA_PI / 2;
 
     // modulo 360°, so the angle does not get infinite
     // big values of float angle would lesser the precision
-    L.angle = sca_mod(L.angle, 2 * M_PI);
+    L.angle = sca_mod(L.angle, 2 * SCA_PI);
 
     // rotate x and y position with a radius of 80
     // sca_* are the scalar (single value) versions of the mathc library

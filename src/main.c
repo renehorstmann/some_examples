@@ -65,7 +65,7 @@ static void init() {
 static void update(float delta_time) {
     // simulate
 
-    // grab the current window size from the e_window module
+    // updates the camera with the current e_window.size
     camera_update();
 
     // virtual update function
@@ -74,7 +74,7 @@ static void update(float delta_time) {
 }
 
 
-// this function is calles each frame to render stuff, dtime is the time between frames
+// this function is called each frame to render stuff, dtime is the time between frames
 static void render(float dtime) {
     mat4 *camera_mat = &camera.matrices.vp;
 
