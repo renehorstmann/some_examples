@@ -44,11 +44,15 @@ void example_4_init() {
         // value: [0:1] the brightness, 0=black, 1=color or white if sat=0
         vec3 hsv = {{i * 360 / L.objects.num, 1, 1}};
         r->color.rgb = vec3_hsv2rgb(hsv);
+        
+        // the resulting color is clamped in the gpu to [0-1]
+        //    so an alpha value of 8 is ok to use
+        r->color.a = 8;
 
         // each second, this value will be substituted from the color
-        // so after 10 seconds, the color is completely faded away
-        // the resulting color is clamped to [0-1]
-        r->color_speed = vec4_new(0, 0, 0, -0.1);
+        // so until the 7. second, alpha stays >=1
+        //     and between the 7-8 second, the color fades away
+        r->color_speed = vec4_new(0, 0, 0, -1);
 
         r->speed.x = sca_random_normal(0, 5);
         r->speed.y = sca_random_normal(75, 10);
