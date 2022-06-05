@@ -104,9 +104,10 @@ void example_2_update(float dtime) {
     // background
     // "world size" = 1024x1024 units
     //     (>=180) + 60 for the camera
-    //     the smaller window size may be between 240 and 420
+    //     the smallest window size may be between 240 and 420
     //     1024 just to be safe...
-    // on a static camera, you can just use the camera size
+    // on a static (not moving) camera, you can just use the camera size
+    //    (camera_width(), camera_height())
     float bg_width = 1024;
     float bg_height = 1024;
     //
