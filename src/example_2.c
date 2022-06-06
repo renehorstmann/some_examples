@@ -49,7 +49,7 @@ void example_2_init() {
     
     // animator with 4 frames and 8.0 frames per second
     L.animator = u_animator_new_fps(4, 8.0);
-
+    
     // create a new text with the default font85 (per character: 8rows x 5cols)
     //      have a look at the constructor of font55 and font85, if you want to create your own fonts
     // maximal 16 chars
