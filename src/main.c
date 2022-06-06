@@ -15,11 +15,13 @@
 // this module helps to build such poses
 #include "u/pose.h"
 
+// helper functions for button sprites
+#include "u/button.h"
+
 // rhc stuff like assume (assert in runtime)
 #include "rhc/rhc.h"
 
 #include "camera.h"
-#include "button.h"
 
 #include "examples.h"
 
@@ -90,7 +92,7 @@ static void example_select_pointer_callback(ePointer_s pointer, void *ud) {
     pointer.pos = mat4_mul_vec(camera.matrices.v_p_inv, pointer.pos);
 
     for (int i = 0; i < EXAMPLE_NUM; i++) {
-        if (button_clicked(&L.buttons.rects[i], pointer)) {
+        if (u_button_clicked(&L.buttons.rects[i], pointer)) {
             example_select_kill();
             switch (i) {
                 case 0:
@@ -191,7 +193,7 @@ static void example_select_update(float dtime) {
 
         u_pose_set_xy(&L.button_text[i].pose,
                       4 - 128 / 2,
-                      y + (button_is_pressed(&L.buttons.rects[i]) ? 4 : 6));
+                      y + (u_button_is_pressed(&L.buttons.rects[i]) ? 4 : 6));
     }
 }
 

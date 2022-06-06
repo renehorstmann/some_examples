@@ -19,7 +19,7 @@
 
 // module to handle a rect as a button
 // sprite.x=0: unpressed button, sprite.x=1: pressed button
-#include "button.h"
+#include "u/button.h"
 
 #include "camera.h"
 
@@ -77,7 +77,7 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
     pointer.pos = mat4_mul_vec(camera.matrices.v_p_inv, pointer.pos);
 
     // returns true if the button is clicked (pressed down and up again)
-    if (button_clicked(&L.btn_up.rect, pointer)) {
+    if (u_button_clicked(&L.btn_up.rect, pointer)) {
         // log some text, is like a printf function for formatting
         log_info("button upload clicked");
 
@@ -90,7 +90,7 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
         load_image();
     }
 
-    if (button_clicked(&L.btn_down.rect, pointer)) {
+    if (u_button_clicked(&L.btn_down.rect, pointer)) {
         log_info("button download clicked");
 
         // save the current image
@@ -134,10 +134,10 @@ void example_7_update(float dtime) {
     // set the button texts, so that a pressed button will also shift the text
     u_pose_set_xy(&L.btn_up_text.pose,
                   4 - 128 / 2,
-                  -64 + (button_is_pressed(&L.btn_up.rect) ? 4 : 6));
+                  -64 + (u_button_is_pressed(&L.btn_up.rect) ? 4 : 6));
     u_pose_set_xy(&L.btn_down_text.pose,
                   4 - 128 / 2,
-                  -64 - 20 + (button_is_pressed(&L.btn_down.rect) ? 4 : 6));
+                  -64 - 20 + (u_button_is_pressed(&L.btn_down.rect) ? 4 : 6));
 }
 
 void example_7_render(const mat4 *cam) {
