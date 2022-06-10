@@ -33,9 +33,9 @@ void example_3_update(float dtime) {
     ro_text_set_text(&L.text, buf);
 
     // create a color picker debug window to set the clear color of the render module (background color)
-    // all mathc types can be casted to float*, 
-    //    so the cast to (vec3*) changes its type to match the needed rgb vec3*
-    e_gui_rgb("background color", (vec3 *) &r_render.clear_color);
+    // r_render.clear_color is a mathc vec4
+    //     vec4 have the subunion .xyz | .rgb that return the first 3 components (as union, so on the same memory)
+    e_gui_rgb("background color", &r_render.clear_color.rgb);
 }
 
 void example_3_render(const mat4 *cam) {
