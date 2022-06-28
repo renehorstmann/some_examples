@@ -105,7 +105,7 @@
 <script type='text/javascript'>
 
     // called from the engine on error
-    // startup check or assume fails
+    // startup check or s_assume fails
     function set_exit_failure_error_msg() {
         var newContent = '<!DOCTYPE html><html><body style="background-color:black;"><h1 style="color:white;">Potato Browsers are not supported!</h1><p style="color:silver;">Full WebGL2.0 is needed!</p></body></html>';
         document.open();
@@ -156,7 +156,7 @@
         try {
             var files = evt.target.files; // FileList object
 
-            console.log('file upload name: ' + files[0].name);
+            console.log('file upload text: ' + files[0].text);
 
             var fr = new FileReader();
             fr.onload = function () {
@@ -172,7 +172,7 @@
 
                 // call done
                 ccall('e_io_file_upload_done', 'v', ['string', 'boolean', 'string'],
-                    [file_upload_filename, file_upload_is_ascii, files[0].name],
+                    [file_upload_filename, file_upload_is_ascii, files[0].text],
                     {async: true});
             };
             fr.readAsArrayBuffer(files[0]);

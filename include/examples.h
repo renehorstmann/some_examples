@@ -1,9 +1,9 @@
 #ifndef SOME_EXAMPLES_H
 #define SOME_EXAMPLES_H
 
-#include "mathc/types/float.h"
+#include "m/types/float.h"
 
-#define EXAMPLE_NUM 8
+#define EXAMPLE_NUM 9
 
 static const char *example_titles[EXAMPLE_NUM] = {
         [0] = "the first rect",
@@ -12,8 +12,9 @@ static const char *example_titles[EXAMPLE_NUM] = {
         [3] = "nuklear gui",
         [4] = "particles",
         [5] = "text input",
-        [6] = "container",
-        [7] = "up 'n download",
+        [6] = "color picker",
+        [7] = "container",
+        [8] = "up 'n download",
 };
 
 void example_0_init();
@@ -63,5 +64,12 @@ void example_7_init();
 void example_7_update(float dtime);
 
 void example_7_render(const mat4 *cam);
+
+void example_8_init();
+
+void example_8_update(float dtime);
+
+void example_8_render(const mat4 *cam);
+
 
 #endif //SOME_EXANPLES_H

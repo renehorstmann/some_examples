@@ -18,8 +18,10 @@
 // helper functions for button sprites
 #include "u/button.h"
 
-// rhc stuff like assume (assert in runtime)
-#include "rhc/rhc.h"
+// most header also include the following:
+// #include "s/s.h"
+// the module 's' contains some basic stuff like s_log, s_malloc
+// its based on rhc, which is a C standard library addition
 
 #include "camera.h"
 
@@ -135,8 +137,14 @@ static void example_select_pointer_callback(ePointer_s pointer, void *ud) {
                     L.update_fun = example_7_update;
                     L.render_fun = example_7_render;
                     return;
+                case 8:
+                    example_8_init();
+                    L.update_fun = example_8_update;
+                    L.render_fun = example_8_render;
+                    return;
+                default:
+                    s_assume(false, "invalid example?");
             }
-            assume(false, "invalid example?");
         }
     }
 }

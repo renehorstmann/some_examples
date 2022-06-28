@@ -15,7 +15,7 @@
 
 #include "r/ro_single.h"
 #include "u/pose.h"
-#include "mathc/float.h"
+#include "m/float.h"
 
 #include "camera.h"
 
@@ -61,7 +61,7 @@ void example_2_init() {
 
     // background tiles
     // a uColor_s holds 4 bytes 
-    //      (typedef of mathc ucvec4 with unsigned char type)
+    //      (typedef of m ucvec4 with unsigned char type)
     // so we build a chess like little 2x2 image
     uColor_s buf[4];
     buf[0] = buf[3] = (uColor_s) {{40, 40, 40, 255}};

@@ -16,8 +16,8 @@
 // the pose is defined as a 4x4 matrix
 #include "u/pose.h"
 
-// float stuff like vectors, matrices, etc. from mathc library
-#include "mathc/float.h"
+// float stuff like vectors, matrices, etc. from m library
+#include "m/float.h"
 
 
 // all of r/* and u/*
@@ -58,7 +58,7 @@ void example_0_update(float dtime) {
     L.angle = sca_mod(L.angle, 2 * SCA_PI);
 
     // rotate x and y position with a radius of 80
-    // sca_* are the scalar (single value) versions of the mathc library
+    // sca_* are the scalar (single value) versions of the m library
     float x = 80 * sca_cos(L.angle);
     float y = 80 * sca_sin(L.angle);
 

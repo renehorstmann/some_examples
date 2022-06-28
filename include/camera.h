@@ -6,9 +6,9 @@
 // to control the camera position and size
 //
 
-#include "rhc/rhc.h"
-#include "mathc/types/float.h"
-#include "mathc/types/int.h"
+#include "s/s.h"
+#include "m/types/float.h"
+#include "m/types/int.h"
 
 // the camera will unsure a canvas of at least CAMERA_SIZE * CAMERA_SIZE units
 #define CAMERA_SIZE 180 // *4=720; *6=1080; *8=1440

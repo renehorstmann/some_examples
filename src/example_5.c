@@ -27,9 +27,12 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
 
     pointer.pos = mat4_mul_vec(camera.matrices.v_p_inv, pointer.pos);
 
-    // if the name hitbox is pressed, start the textinput
+    // if the text hitbox is pressed, start the textinput
     if (!L.textinput && u_pose_contains(L.name_box, pointer.pos)) {
-        L.textinput = textinput_new("Your name", 0);
+        L.textinput = textinput_new("Your name:", 0);
+
+        // optional textinput background color
+        L.textinput->bg_color = (vec4) {{0.2, 0, 0, 1}};
     }
 }
 
@@ -41,7 +44,7 @@ void example_5_init() {
     ro_text_set_text(&L.name, "Hello changeme");
     L.name.pose = u_pose_new(-60, 60, 1, 1);
 
-    // name click box to start the textinput
+    // text click box to start the textinput
     L.name_box = u_pose_new_aa(-70, 70, 100, 25);
 
     L.textinput = NULL;
@@ -55,7 +58,7 @@ void example_5_update(float dtime) {
         // only show ok button for a string length >= 4 chars
         L.textinput->ok_active = strlen(L.textinput->text) >= 4;
 
-        // on done, copy the name to the RoText
+        // on done, copy the text to the RoText
         if (L.textinput->state == TEXTINPUT_DONE) {
             char text[64];
             snprintf(text, sizeof text, "Hello %s", L.textinput->text);

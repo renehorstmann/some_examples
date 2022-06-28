@@ -11,11 +11,11 @@
 
 
 #include "u/pose.h"
-#include "mathc/float.h"
-#include "mathc/utils/color.h"
+#include "m/float.h"
+#include "m/utils/color.h"
 
-// random numbers for mathc
-#include "mathc/utils/random.h"
+// random numbers for m
+#include "m/utils/random.h"
 
 
 static struct {

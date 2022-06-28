@@ -1,150 +1,199 @@
 #include "examples.h"
 //
-// up 'n download
+// container
 //
 
-// logging functions
-#include "rhc/log.h"
+// to seed rand (the default C random number generator)
+#include <time.h>
 
-// load, save and manipulate images (on web only .png for load and save)
-#include "u/image.h"
 
-// save user data or do up and download for web
-#include "e/io.h"
-
+#include "e/input.h"
 #include "r/ro_text.h"
+#include "r/ro_batch.h"
 #include "r/ro_single.h"
 #include "r/texture.h"
 #include "u/pose.h"
+#include "m/utils/color.h"
 
-// module to handle a rect as a button
-// sprite.x=0: unpressed button, sprite.x=1: pressed button
-#include "u/button.h"
+// m random stuff
+#include "m/utils/random.h"
+
+// imports a container system for stacks and flow container
+#include "u/container.h"
 
 #include "camera.h"
 
+// how many colored objects
+#define NUM 36
+
 static struct {
-    // could also be a single batch, for a minimal performance benefit
-    RoSingle btn_up, btn_down;
-    RoText btn_up_text, btn_down_text;
+    // The container manages the positions of its items, according to some rules (mode, alignmend)
+    uContainer container;
 
-    RoSingle image_ro;
+    // Items for the container are some colored rectangles
+    RoBatch colors;
 
-    // holds data for an image
-    uImage image;
+    // container max_size background in gray
+    RoSingle max_size;
+    RoSingle needed_size;
+
+    // texts to display the current container settings
+    RoText mode;
+    RoText align_w;
+    RoText align_h;
+
+    // hitboxes of the texts to change the container settings
+    mat4 mode_box;
+    mat4 align_w_box;
+    mat4 align_h_box;
 } L;
 
-static void load_image() {
-    uImage img = u_image_new_file(1, "upload.png");
-    if (!u_image_valid(img)) {
-        log_info("loading image failed");
-        return;
-    }
-
-    // do some image manipulation (lower the colors)
-    for (int r = 0; r < img.rows; r++) {
-        for (int c = 0; c < img.cols; c++) {
-            uColor_s col = *u_image_pixel(img, c, r, 0);
-
-            // a uColor_s is just a typedef to mathc ucvec4 (unsigned char)
-            // reduce colors
-            col = ucvec4_scale(ucvec4_div(col, 64), 64);
-
-            // reset the new color
-            *u_image_pixel(img, c, r, 0) = col;
-        }
-    }
-
-    u_image_kill(&L.image);
-    L.image = img;
-
-    rTexture tex = r_texture_new(img.cols, img.rows,
-                                 1, 1,  // sprite_cols, sprite_rows
-                                 img.data);
-
-    // will kill its old texture and takes the ownership of tex (_sink)
-    //     set L.image_ro.owns_tex to false, to change this behavior
-    ro_single_set_texture(&L.image_ro, tex);
-}
-
-// this callback will be called on a succeeded file upload (web only)
-static void upload_callback(const char *file, bool ascii, const char *user_file_name, void *user_data) {
-    log_info("got a web upload: <%s>", user_file_name);
-    load_image();
-}
-
 static void pointer_callback(ePointer_s pointer, void *user_data) {
+    if (pointer.action != E_POINTER_DOWN)
+        return;
+
     pointer.pos = mat4_mul_vec(camera.matrices.v_p_inv, pointer.pos);
 
-    // returns true if the button is clicked (pressed down and up again)
-    if (u_button_clicked(&L.btn_up.rect, pointer)) {
-        // log some text, is like a printf function for formatting
-        log_info("button upload clicked");
-
-        // web: create an upload dialog
-        e_io_ask_for_file_upload("upload.png",
-                                 false, // ascii file?
-                                 upload_callback, NULL);
-
-        // if not on web, just load the image upload.png (must be in the working directory)
-        load_image();
+    // if a hitbox is clicked, change its setting
+    if (u_pose_aa_contains(L.mode_box, pointer.pos.xy)) {
+        L.container.mode++;
+        if (L.container.mode >= U_CONTAINER_NUM_MODES)
+            L.container.mode = 0;
     }
-
-    if (u_button_clicked(&L.btn_down.rect, pointer)) {
-        log_info("button download clicked");
-
-        // save the current image
-        u_image_save_file(L.image, "download.png");
-
-        // web: offer a file download
-        e_io_offer_file_as_download("download.png");
+    if (u_pose_aa_contains(L.align_w_box, pointer.pos.xy)) {
+        L.container.align_width++;
+        if (L.container.align_width >= U_CONTAINER_ALIGN_NUM_MODES)
+            L.container.align_width = 0;
+    }
+    if (u_pose_aa_contains(L.align_h_box, pointer.pos.xy)) {
+        L.container.align_height++;
+        if (L.container.align_height >= U_CONTAINER_ALIGN_NUM_MODES)
+            L.container.align_height = 0;
     }
 }
 
 void example_7_init() {
     e_input_register_pointer_event(pointer_callback, NULL);
 
-    // same button as in main
-    L.btn_up = ro_single_new(r_texture_new_file(2, 1, "res/big_btn.png"));
-    L.btn_down = ro_single_new(r_texture_new_file(2, 1, "res/big_btn.png"));
-    L.btn_up.rect.pose = u_pose_new(0, -64, 128, 16);
-    L.btn_down.rect.pose = u_pose_new(0, -64 - 20, 128, 16);
+    // create a new container with NUM items, left = -80, top = 80
+    L.container = u_container_new(NUM, -80, 80);
+    // maximal size for the container
+    L.container.max_size = (vec2) {{160, 120}};
 
-    L.btn_up_text = ro_text_new_font85(20);
-    ro_text_set_text(&L.btn_up_text, "upload image .png");
-    ro_text_set_color(&L.btn_up_text, R_COLOR_BLACK);
-    L.btn_down_text = ro_text_new_font85(20);
-    ro_text_set_text(&L.btn_down_text, "download image");
-    ro_text_set_color(&L.btn_down_text, R_COLOR_BLACK);
+    // setup the container items
+    L.colors = ro_batch_new(NUM, r_texture_new_white_pixel());
 
-    // an invalid texture will just render black
-    L.image = u_image_new_empty(256, 256, 1);
-    for (int r = 0; r < L.image.rows; r++) {
-        for (int c = 0; c < L.image.cols; c++) {
-            *u_image_pixel(L.image, c, r, 0) = (uColor_s) {{r, c, r - c, 255}};
-        }
+    // seed the C default random number generator (rand)
+    //    so each time the example is loaded, different sizes are generated
+    //    m/random uses rand or a user defined rand function
+    srand(time(NULL));
+
+    for (int i = 0; i < NUM; i++) {
+        // random size of the color rectangle
+        // sca_random_range returns a uniform random value between a and b (8-16)
+        float size_x = sca_random_range(8, 16);
+        float size_y = sca_random_range(8, 16);
+
+        u_pose_set_size(&L.colors.rects[i].pose, size_x, size_y);
+        L.colors.rects[i].color.rgb = vec3_hsv2rgb((vec3) {{i * 360.0 / NUM, 1, 1}});
+
+        // item size is bigger than rectangle size, to get a 1 unit border around them
+        L.container.items[i].size = (vec2) {{size_x + 2, size_y + 2}};
     }
-    L.image_ro = ro_single_new(r_texture_new(L.image.cols, L.image.rows,
-                                             1, 1, // sprite_cols, sprite_rows
-                                             L.image.data));
-    L.image_ro.rect.pose = u_pose_new(0, 20, 120, 100);
+
+    L.max_size = ro_single_new(r_texture_new_white_pixel());
+    L.max_size.rect.pose = u_pose_new_aa(-80, 80, 160, 120);
+    L.max_size.rect.color = (vec4) {{0.25, 0.25, 0.25, 1.0}};
+
+    L.needed_size = ro_single_new(r_texture_new_white_pixel());
+    L.needed_size.rect.color = (vec4) {{0.5, 0.5, 0.5, 1.0}};
+
+    L.mode = ro_text_new_font55(32);
+    L.align_w = ro_text_new_font55(32);
+    L.align_h = ro_text_new_font55(32);
+
+    u_pose_set_xy(&L.mode.pose, -70, -50);
+    u_pose_set_xy(&L.align_w.pose, -70, -60);
+    u_pose_set_xy(&L.align_h.pose, -70, -70);
+
+    L.mode_box = u_pose_new_aa(-80, -45, 160, 10);
+    L.align_w_box = u_pose_new_aa(-80, -55, 160, 10);
+    L.align_h_box = u_pose_new_aa(-80, -65, 160, 10);
 }
 
 void example_7_update(float dtime) {
-    // set the button texts, so that a pressed button will also shift the text
-    u_pose_set_xy(&L.btn_up_text.pose,
-                  4 - 128 / 2,
-                  -64 + (u_button_is_pressed(&L.btn_up.rect) ? 4 : 6));
-    u_pose_set_xy(&L.btn_down_text.pose,
-                  4 - 128 / 2,
-                  -64 - 20 + (u_button_is_pressed(&L.btn_down.rect) ? 4 : 6));
+    // update the container items
+    u_container_update(&L.container);
+
+    // set the rectangle center, according to the container
+    // the container items have positions as left / top,
+    //      so we use u_container_item_center_pos to transform them into the rectangle center
+    for (int i = 0; i < NUM; i++) {
+        vec2 pos = u_container_item_center_pos(
+                L.container.items[i]);
+        u_pose_set_xy(&L.colors.rects[i].pose, pos.x, pos.y);
+    }
+
+    // set the needed size bg rect
+    L.needed_size.rect.pose = u_pose_new_aa(L.container.out.left, L.container.out.top,
+                                            L.container.out.size.x, L.container.out.size.y);
+
+    // set the texts, according to the current container mode
+    switch (L.container.mode) {
+        default:
+        case U_CONTAINER_MODE_STACK_V:
+            ro_text_set_text(&L.mode, "MODE STACK-V");
+            break;
+        case U_CONTAINER_MODE_STACK_H:
+            ro_text_set_text(&L.mode, "MODE STACK-H");
+            break;
+        case U_CONTAINER_MODE_FREE_V:
+            ro_text_set_text(&L.mode, "MODE FREE-V");
+            break;
+        case U_CONTAINER_MODE_FREE_H:
+            ro_text_set_text(&L.mode, "MODE FREE-H");
+            break;
+    }
+
+    switch (L.container.align_width) {
+        default:
+        case U_CONTAINER_ALIGN_START:
+            ro_text_set_text(&L.align_w, "ALIGN-WIDTH START");
+            break;
+        case U_CONTAINER_ALIGN_END:
+            ro_text_set_text(&L.align_w, "ALIGN-WIDTH END");
+            break;
+        case U_CONTAINER_ALIGN_CENTER:
+            ro_text_set_text(&L.align_w, "ALIGN-WIDTH CENTER");
+            break;
+        case U_CONTAINER_ALIGN_BLOCK:
+            ro_text_set_text(&L.align_w, "ALIGN-WIDTH BLOCK");
+            break;
+    }
+
+    switch (L.container.align_height) {
+        default:
+        case U_CONTAINER_ALIGN_START:
+            ro_text_set_text(&L.align_h, "ALIGN-HEIGHT START");
+            break;
+        case U_CONTAINER_ALIGN_END:
+            ro_text_set_text(&L.align_h, "ALIGN-HEIGHT END");
+            break;
+        case U_CONTAINER_ALIGN_CENTER:
+            ro_text_set_text(&L.align_h, "ALIGN-HEIGHT CENTER");
+            break;
+        case U_CONTAINER_ALIGN_BLOCK:
+            ro_text_set_text(&L.align_h, "ALIGN-HEIGHT BLOCK");
+            break;
+    }
 }
 
 void example_7_render(const mat4 *cam) {
-    ro_single_render(&L.image_ro, cam);
-    ro_single_render(&L.btn_up, cam);
-    ro_single_render(&L.btn_down, cam);
-    ro_text_render(&L.btn_up_text, cam);
-    ro_text_render(&L.btn_down_text, cam);
+    ro_single_render(&L.max_size, cam);
+    ro_single_render(&L.needed_size, cam);
+    ro_batch_render(&L.colors, cam, true);
+    ro_text_render(&L.mode, cam);
+    ro_text_render(&L.align_w, cam);
+    ro_text_render(&L.align_h, cam);
 }
 

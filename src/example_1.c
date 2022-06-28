@@ -13,7 +13,7 @@
 #include "u/pose.h"
 
 // color utilities to swap color spaces between hsv and rgb
-#include "mathc/utils/color.h"
+#include "m/utils/color.h"
 
 // the camera module has the camera matrices and can move the camera
 #include "camera.h"
@@ -27,9 +27,9 @@ static struct {
 
 // this callback is called on a pointer event
 // pointer.action is either:
-//      E_POINTER_DOWN: finger starts to touch, cursor has clicked
-//      E_POINTER_MOVE: finger moves, cursor moves (also without being down)
-//      E_POINTER_UP:   finger touch ends, cursor click stopped
+//      E_POINTER_DOWN:     finger starts to touch, cursor has clicked
+//      E_POINTER_MOVE:     finger moves, cursor moves when a mouse button is pressed
+//      E_POINTER_UP:       finger touch ends, cursor click stopped
 // the pointer.id counts the multi touch fingers,
 //      or indicate that the middle or right mouse button has been clicked
 //      id==0: first finder, or left click
@@ -57,7 +57,7 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
     if (pointer.action == E_POINTER_DOWN) {
         for (int i = L.objects.num - 1; i >= 0; i--) {
 
-            // u_pose_aa_contains is better in performance, but assumes that the pose is axis aligned
+            // u_pose_aa_contains is better in performance, but s_assumes that the pose is axis aligned
             if (u_pose_contains(L.objects.rects[i].pose, pointer.pos)) {
                 L.grabbed = i;
                 break;
