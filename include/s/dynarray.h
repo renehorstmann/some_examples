@@ -24,7 +24,7 @@
 #error dynarray.h needs a type (e.g.: #define TYPE int)
 #endif
 
-// array class text, for example Foo
+// array class name, for example Foo
 #ifndef CLASS
 #define CLASS S_NAME_CONCAT2(DynArray_, TYPE)
 #endif

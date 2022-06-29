@@ -185,19 +185,21 @@ static void pointer_event(ePointer_s pointer, void *user_data) {
     }
 
     // a
-    pose_inv = mat4_inv(self->L.a.rect.pose);
-    pos = mat4_mul_vec(pose_inv, pointer.pos);
-    if (pos.x >= -1 && pos.x <= 1 && pos.y >= -0.5 && pos.y <= 0.5) {
-        if (pos.x >= -0.6 && pos.x <= 0.6) {
-            vec4 color = u_color_to_vec4(self->color);
-            float val = sca_clamp(pos.x + 0.5, 0, 1);
-            color.a = val;
-            self->color = u_color_from_vec4(color);
-        } else if (pointer.action == E_POINTER_DOWN) {
-            if (pos.x < 0 && self->color.a>0)
-                self->color.a--;
-            else if(pos.x>0 && self->color.a<255)
-                self->color.a++;
+    if(self->show_alpha) {
+        pose_inv = mat4_inv(self->L.a.rect.pose);
+        pos = mat4_mul_vec(pose_inv, pointer.pos);
+        if (pos.x >= -1 && pos.x <= 1 && pos.y >= -0.5 && pos.y <= 0.5) {
+            if (pos.x >= -0.6 && pos.x <= 0.6) {
+                vec4 color = u_color_to_vec4(self->color);
+                float val = sca_clamp(pos.x + 0.5, 0, 1);
+                color.a = val;
+                self->color = u_color_from_vec4(color);
+            } else if (pointer.action == E_POINTER_DOWN) {
+                if (pos.x < 0 && self->color.a > 0)
+                    self->color.a--;
+                else if (pos.x > 0 && self->color.a < 255)
+                    self->color.a++;
+            }
         }
     }
 }
@@ -238,6 +240,7 @@ ColorPicker *colorpicker_new(const char *title, uColor_s init_color) {
 
     self->state = COLORPICKER_IN_PROGRESS;
     self->ok_active = true;
+    self->show_alpha = true;
 
     self->color = init_color;
     self->L.init_color = init_color;
@@ -332,8 +335,6 @@ ColorPicker *colorpicker_new(const char *title, uColor_s init_color) {
     }
 
     self->L.btns = ro_batch_new(2, r_texture_new_file(2, 2, "res/colorpicker_btns.png"));
-    self->L.btns.rects[0].pose = u_pose_new(56, -80, 32, 16);
-    self->L.btns.rects[1].pose = u_pose_new(-56, -80, 32, 16);
     self->L.btns.rects[1].sprite.y = 1;
 
     self->L.bg = ro_single_new(r_texture_new_white_pixel());
@@ -385,6 +386,13 @@ void colorpicker_update(ColorPicker *self, float dtime) {
             self->L.cam.width, self->L.cam.height);
     self->L.bg.rect.color = self->bg_color;
 
+    // btns
+    if (self->ok_active) {
+        self->L.btns.rects[0].pose = u_pose_new(56, -80, 32, 16);
+    } else {
+        u_pose_set_xy(&self->L.btns.rects[0].pose, SCA_MAX, SCA_MAX);
+    }
+    self->L.btns.rects[1].pose = u_pose_new(-56, -80, 32, 16);
 
     vec4 color = u_color_to_vec4(self->color);
     self->L.color_new.rect.color = color;
@@ -417,8 +425,13 @@ void colorpicker_update(ColorPicker *self, float dtime) {
     u_pose_set_x(&self->L.slider.rects[0].pose, SLIDER_LEFT+SLIDER_SIZE*hsv.v0/360);
     u_pose_set_x(&self->L.slider.rects[1].pose, SLIDER_LEFT+SLIDER_SIZE*hsv.v1);
     u_pose_set_x(&self->L.slider.rects[2].pose, SLIDER_LEFT+SLIDER_SIZE*hsv.v2);
-    for(int rgba=0; rgba<4; rgba++) {
-        u_pose_set_x(&self->L.slider.rects[3+rgba].pose, SLIDER_LEFT+SLIDER_SIZE*color.v[rgba]);
+    for(int rgb=0; rgb<3; rgb++) {
+        u_pose_set_x(&self->L.slider.rects[3+rgb].pose, SLIDER_LEFT+SLIDER_SIZE*color.v[rgb]);
+    }
+    if(self->show_alpha) {
+        u_pose_set_x(&self->L.slider.rects[6].pose, SLIDER_LEFT+SLIDER_SIZE*color.a);
+    } else {
+        u_pose_set_x(&self->L.slider.rects[6].pose, SCA_MAX);
     }
 
 
@@ -507,23 +520,31 @@ void colorpicker_render(const ColorPicker *self) {
     ro_text_render(&self->L.title, cam_mat);
 
     ro_single_render(&self->L.h, cam_mat);
+    ro_text_render(&self->L.h_num, cam_mat);
+
     ro_single_render(&self->L.s, cam_mat);
+    ro_text_render(&self->L.s_num, cam_mat);
+
     ro_single_render(&self->L.v, cam_mat);
+    ro_text_render(&self->L.v_num, cam_mat);
+
     ro_single_render(&self->L.r, cam_mat);
+    ro_text_render(&self->L.r_num, cam_mat);
+
     ro_single_render(&self->L.g, cam_mat);
+    ro_text_render(&self->L.g_num, cam_mat);
+
     ro_single_render(&self->L.b, cam_mat);
-    ro_single_render(&self->L.a_bg, cam_mat);
-    ro_single_render(&self->L.a, cam_mat);
+    ro_text_render(&self->L.b_num, cam_mat);
+
+    if(self->show_alpha) {
+        ro_single_render(&self->L.a_bg, cam_mat);
+        ro_single_render(&self->L.a, cam_mat);
+        ro_text_render(&self->L.a_num, cam_mat);
+    }
 
     ro_batch_render(&self->L.slider, cam_mat, true);
 
-    ro_text_render(&self->L.h_num, cam_mat);
-    ro_text_render(&self->L.s_num, cam_mat);
-    ro_text_render(&self->L.v_num, cam_mat);
-    ro_text_render(&self->L.r_num, cam_mat);
-    ro_text_render(&self->L.g_num, cam_mat);
-    ro_text_render(&self->L.b_num, cam_mat);
-    ro_text_render(&self->L.a_num, cam_mat);
 
     ro_single_render(&self->L.color_bg, cam_mat);
     ro_single_render(&self->L.color_prev, cam_mat);

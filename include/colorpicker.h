@@ -25,6 +25,11 @@ typedef struct {
     // default = true
     // reset for example by ok_active = strlen(out.text) > 4
     bool ok_active;
+
+    // default = true
+    // set to false to disable the alpha slider
+    bool show_alpha;
+
     vec4 bg_color;
 
     uColor_s color;

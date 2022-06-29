@@ -26,7 +26,7 @@
 #error hashmap.h needs a type (value type) (e.g.: #define TYPE int)
 #endif
 
-// array class text, for example Foo
+// array class name, for example Foo
 #ifndef CLASS
 #define CLASS S_NAME_CONCAT2(HashMap_, TYPE)
 #endif

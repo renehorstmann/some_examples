@@ -50,7 +50,7 @@ void s_log_set_quiet(bool set);
 /**
  * Logging function.
  * If opt_file is NULL, file and line will be omitted. (Useful for helper functions (like s_assume))
- * If opt_func is not NULL, the function text will be printed before format
+ * If opt_func is not NULL, the function name will be printed before format
  */
 void s_log_base(enum s_log_level level, const char *opt_file, int line,
                   const char *opt_func, const char *format, ...);

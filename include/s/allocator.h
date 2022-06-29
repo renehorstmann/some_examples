@@ -69,7 +69,7 @@ static sAllocator_i s_allocator_new() {
 }
 
 //
-// FUnctions (with smaller text to not callide with s_allocator_new)
+// FUnctions (with smaller name to not callide with s_allocator_new)
 //
 
 // realloc
@@ -122,7 +122,7 @@ static void *s_a_realloc(sAllocator_i self, void *memory, ssize n) {
 
 
 //
-// Macro functions (with smaller text to not callide with s_allocator_new)
+// Macro functions (with smaller name to not callide with s_allocator_new)
 //
 
 // calls allocator_free and sets the pointer to NULL
