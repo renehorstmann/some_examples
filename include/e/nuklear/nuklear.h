@@ -1388,10 +1388,10 @@ NK_API const struct nk_draw_command* nk__draw_next(const struct nk_draw_command*
 /// Function                            | Description
 /// ------------------------------------|----------------------------------------
 /// nk_begin                            | Starts a new window; needs to be called every frame for every window (unless hidden) or otherwise the window gets removed
-/// nk_begin_titled                     | Extended window start with separated title and identifier to allow multiple windows with same text but not title
+/// nk_begin_titled                     | Extended window start with separated title and identifier to allow multiple windows with same name but not title
 /// nk_end                              | Needs to be called at the end of the window building process to process scaling, scrollbars and general cleanup
 //
-/// nk_window_find                      | Finds and returns the window with give text
+/// nk_window_find                      | Finds and returns the window with give name
 /// nk_window_get_bounds                | Returns a rectangle with screen position and size of the currently processed window.
 /// nk_window_get_position              | Returns the position of the currently processed window
 /// nk_window_get_size                  | Returns the size with width and height of the currently processed window
@@ -1405,7 +1405,7 @@ NK_API const struct nk_draw_command* nk__draw_next(const struct nk_draw_command*
 /// nk_window_get_canvas                | Returns the draw command buffer. Can be used to draw custom widgets
 /// nk_window_get_scroll                | Gets the scroll offset of the current window
 /// nk_window_has_focus                 | Returns if the currently processed window is currently active
-/// nk_window_is_collapsed              | Returns if the window with given text is currently minimized/collapsed
+/// nk_window_is_collapsed              | Returns if the window with given name is currently minimized/collapsed
 /// nk_window_is_closed                 | Returns if the currently processed window was closed
 /// nk_window_is_hidden                 | Returns if the currently processed window was hidden
 /// nk_window_is_active                 | Same as nk_window_has_focus for some reason
@@ -1419,9 +1419,9 @@ NK_API const struct nk_draw_command* nk__draw_next(const struct nk_draw_command*
 /// nk_window_set_focus                 | Set the currently processed window as active window
 /// nk_window_set_scroll                | Sets the scroll offset of the current window
 //
-/// nk_window_close                     | Closes the window with given window text which deletes the window at the end of the frame
-/// nk_window_collapse                  | Collapses the window with given window text
-/// nk_window_collapse_if               | Collapses the window with given window text if the given condition was met
+/// nk_window_close                     | Closes the window with given window name which deletes the window at the end of the frame
+/// nk_window_collapse                  | Collapses the window with given window name
+/// nk_window_collapse_if               | Collapses the window with given window name if the given condition was met
 /// nk_window_show                      | Hides a visible or reshows a hidden window
 /// nk_window_show_if                   | Hides/shows a window depending on condition
 */
@@ -1482,10 +1482,10 @@ NK_WINDOW_NO_INPUT          = NK_FLAG(10)
 NK_API int nk_begin(struct nk_context *ctx, const char *title, struct nk_rect bounds, nk_flags flags);
 /*/// #### nk_begin_titled
 /// Extended window start with separated title and identifier to allow multiple
-/// windows with same title but not text
+/// windows with same title but not name
 ///
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// int nk_begin_titled(struct nk_context *ctx, const char *text, const char *title, struct nk_rect bounds, nk_flags flags);
+/// int nk_begin_titled(struct nk_context *ctx, const char *name, const char *title, struct nk_rect bounds, nk_flags flags);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1514,10 +1514,10 @@ NK_API int nk_begin_titled(struct nk_context *ctx, const char *name, const char 
 */
 NK_API void nk_end(struct nk_context *ctx);
 /*/// #### nk_window_find
-/// Finds and returns a window from passed text
+/// Finds and returns a window from passed name
 ///
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// struct nk_window *nk_window_find(struct nk_context *ctx, const char *text);
+/// struct nk_window *nk_window_find(struct nk_context *ctx, const char *name);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1526,7 +1526,7 @@ NK_API void nk_end(struct nk_context *ctx);
 /// __name__    | eWindow identifier
 ///
 /// Returns a `nk_window` struct pointing to the identified window or NULL if
-/// no window with the given text was found
+/// no window with the given name was found
 */
 NK_API struct nk_window *nk_window_find(struct nk_context *ctx, const char *name);
 /*/// #### nk_window_get_bounds
@@ -1768,9 +1768,9 @@ NK_API int nk_window_has_focus(const struct nk_context*);
 */
 NK_API int nk_window_is_hovered(struct nk_context*);
 /*/// #### nk_window_is_collapsed
-/// Returns if the window with given text is currently minimized/collapsed
+/// Returns if the window with given name is currently minimized/collapsed
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// int nk_window_is_collapsed(struct nk_context *ctx, const char *text);
+/// int nk_window_is_collapsed(struct nk_context *ctx, const char *name);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1783,9 +1783,9 @@ NK_API int nk_window_is_hovered(struct nk_context*);
 */
 NK_API int nk_window_is_collapsed(struct nk_context *ctx, const char *name);
 /*/// #### nk_window_is_closed
-/// Returns if the window with given text was closed by calling `nk_close`
+/// Returns if the window with given name was closed by calling `nk_close`
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// int nk_window_is_closed(struct nk_context *ctx, const char *text);
+/// int nk_window_is_closed(struct nk_context *ctx, const char *name);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1797,9 +1797,9 @@ NK_API int nk_window_is_collapsed(struct nk_context *ctx, const char *name);
 */
 NK_API int nk_window_is_closed(struct nk_context*, const char*);
 /*/// #### nk_window_is_hidden
-/// Returns if the window with given text is hidden
+/// Returns if the window with given name is hidden
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// int nk_window_is_hidden(struct nk_context *ctx, const char *text);
+/// int nk_window_is_hidden(struct nk_context *ctx, const char *name);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1813,7 +1813,7 @@ NK_API int nk_window_is_hidden(struct nk_context*, const char*);
 /*/// #### nk_window_is_active
 /// Same as nk_window_has_focus for some reason
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// int nk_window_is_active(struct nk_context *ctx, const char *text);
+/// int nk_window_is_active(struct nk_context *ctx, const char *name);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1853,9 +1853,9 @@ NK_API int nk_window_is_any_hovered(struct nk_context*);
 */
 NK_API int nk_item_is_any_active(struct nk_context*);
 /*/// #### nk_window_set_bounds
-/// Updates position and size of window with passed in text
+/// Updates position and size of window with passed in name
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_set_bounds(struct nk_context*, const char *text, struct nk_rect bounds);
+/// void nk_window_set_bounds(struct nk_context*, const char *name, struct nk_rect bounds);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1866,9 +1866,9 @@ NK_API int nk_item_is_any_active(struct nk_context*);
 */
 NK_API void nk_window_set_bounds(struct nk_context*, const char *name, struct nk_rect bounds);
 /*/// #### nk_window_set_position
-/// Updates position of window with passed text
+/// Updates position of window with passed name
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_set_position(struct nk_context*, const char *text, struct nk_vec2 pos);
+/// void nk_window_set_position(struct nk_context*, const char *name, struct nk_vec2 pos);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1879,9 +1879,9 @@ NK_API void nk_window_set_bounds(struct nk_context*, const char *name, struct nk
 */
 NK_API void nk_window_set_position(struct nk_context*, const char *name, struct nk_vec2 pos);
 /*/// #### nk_window_set_size
-/// Updates size of window with passed in text
+/// Updates size of window with passed in name
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_set_size(struct nk_context*, const char *text, struct nk_vec2);
+/// void nk_window_set_size(struct nk_context*, const char *name, struct nk_vec2);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1892,9 +1892,9 @@ NK_API void nk_window_set_position(struct nk_context*, const char *name, struct 
 */
 NK_API void nk_window_set_size(struct nk_context*, const char *name, struct nk_vec2);
 /*/// #### nk_window_set_focus
-/// Sets the window with given text as active
+/// Sets the window with given name as active
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_set_focus(struct nk_context*, const char *text);
+/// void nk_window_set_focus(struct nk_context*, const char *name);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1922,7 +1922,7 @@ NK_API void nk_window_set_scroll(struct nk_context*, nk_uint offset_x, nk_uint o
 /*/// #### nk_window_close
 /// Closes a window and marks it for being freed at the end of the frame
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_close(struct nk_context *ctx, const char *text);
+/// void nk_window_close(struct nk_context *ctx, const char *name);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1932,9 +1932,9 @@ NK_API void nk_window_set_scroll(struct nk_context*, nk_uint offset_x, nk_uint o
 */
 NK_API void nk_window_close(struct nk_context *ctx, const char *name);
 /*/// #### nk_window_collapse
-/// Updates collapse state of a window with given text
+/// Updates collapse state of a window with given name
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_collapse(struct nk_context*, const char *text, enum nk_collapse_states state);
+/// void nk_window_collapse(struct nk_context*, const char *name, enum nk_collapse_states state);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1945,9 +1945,9 @@ NK_API void nk_window_close(struct nk_context *ctx, const char *name);
 */
 NK_API void nk_window_collapse(struct nk_context*, const char *name, enum nk_collapse_states state);
 /*/// #### nk_window_collapse_if
-/// Updates collapse state of a window with given text if given condition is met
+/// Updates collapse state of a window with given name if given condition is met
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_collapse_if(struct nk_context*, const char *text, enum nk_collapse_states, int cond);
+/// void nk_window_collapse_if(struct nk_context*, const char *name, enum nk_collapse_states, int cond);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1959,9 +1959,9 @@ NK_API void nk_window_collapse(struct nk_context*, const char *name, enum nk_col
 */
 NK_API void nk_window_collapse_if(struct nk_context*, const char *name, enum nk_collapse_states, int cond);
 /*/// #### nk_window_show
-/// updates visibility state of a window with given text
+/// updates visibility state of a window with given name
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_show(struct nk_context*, const char *text, enum nk_show_states);
+/// void nk_window_show(struct nk_context*, const char *name, enum nk_show_states);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -1972,9 +1972,9 @@ NK_API void nk_window_collapse_if(struct nk_context*, const char *name, enum nk_
 */
 NK_API void nk_window_show(struct nk_context*, const char *name, enum nk_show_states);
 /*/// #### nk_window_show_if
-/// Updates visibility state of a window with given text if a given condition is met
+/// Updates visibility state of a window with given name if a given condition is met
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_window_show_if(struct nk_context*, const char *text, enum nk_show_states, int cond);
+/// void nk_window_show_if(struct nk_context*, const char *name, enum nk_show_states, int cond);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -2568,7 +2568,7 @@ NK_API struct nk_rect nk_layout_space_rect_to_local(struct nk_context*, struct n
 /// Groups are basically windows inside windows. They allow to subdivide space
 /// in a window to layout widgets as a group. Almost all more complex widget
 /// layouting requirements can be solved using groups and basic layouting
-/// fuctionality. Groups just like windows are identified by an unique text and
+/// fuctionality. Groups just like windows are identified by an unique name and
 /// internally keep track of scrollbar offsets by default. However additional
 /// versions are provided to directly manage the scrollbar.
 ///
@@ -2639,7 +2639,7 @@ NK_API struct nk_rect nk_layout_space_rect_to_local(struct nk_context*, struct n
 /// Function                        | Description
 /// --------------------------------|-------------------------------------------
 /// nk_group_begin                  | Start a new group with internal scrollbar handling
-/// nk_group_begin_titled           | Start a new group with separeted text and title and internal scrollbar handling
+/// nk_group_begin_titled           | Start a new group with separeted name and title and internal scrollbar handling
 /// nk_group_end                    | Ends a group. Should only be called if nk_group_begin returned non-zero
 /// nk_group_scrolled_offset_begin  | Start a new group with manual separated handling of scrollbar x- and y-offset
 /// nk_group_scrolled_begin         | Start a new group with manual scrollbar handling
@@ -2665,7 +2665,7 @@ NK_API int nk_group_begin(struct nk_context*, const char *title, nk_flags);
 /*/// #### nk_group_begin_titled
 /// Starts a new widget group. Requires a previous layouting function to specify a pos/size.
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// int nk_group_begin_titled(struct nk_context*, const char *text, const char *title, nk_flags);
+/// int nk_group_begin_titled(struct nk_context*, const char *name, const char *title, nk_flags);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter   | Description
@@ -3211,9 +3211,9 @@ NK_API int nk_color_pick(struct nk_context*, struct nk_colorf*, enum nk_color_fo
 /// or by directly typing a number.
 ///
 /// #### Usage
-/// Each property requires a unique text for identifaction that is also used for
-/// displaying a label. If you want to use the same text multiple times make sure
-/// add a '#' before your text. The '#' will not be shown but will generate a
+/// Each property requires a unique name for identifaction that is also used for
+/// displaying a label. If you want to use the same name multiple times make sure
+/// add a '#' before your name. The '#' will not be shown but will generate a
 /// unique ID. Each propery also takes in a minimum and maximum value. If you want
 /// to make use of the complete number range of a type just use the provided
 /// type limits from `limits.h`. For example `INT_MIN` and `INT_MAX` for
@@ -3283,7 +3283,7 @@ NK_API int nk_color_pick(struct nk_context*, struct nk_colorf*, enum nk_color_fo
 ///     a `#` at the beginning. It will not be shown but guarantees correct behavior.
 ///
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_property_int(struct nk_context *ctx, const char *text, int min, int *val, int max, int step, float inc_per_pixel);
+/// void nk_property_int(struct nk_context *ctx, const char *name, int min, int *val, int max, int step, float inc_per_pixel);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter           | Description
@@ -3304,7 +3304,7 @@ NK_API void nk_property_int(struct nk_context*, const char *name, int min, int *
 ///     a `#` at the beginning. It will not be shown but guarantees correct behavior.
 ///
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_property_float(struct nk_context *ctx, const char *text, float min, float *val, float max, float step, float inc_per_pixel);
+/// void nk_property_float(struct nk_context *ctx, const char *name, float min, float *val, float max, float step, float inc_per_pixel);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter           | Description
@@ -3325,7 +3325,7 @@ NK_API void nk_property_float(struct nk_context*, const char *name, float min, f
 ///     a `#` at the beginning. It will not be shown but guarantees correct behavior.
 ///
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// void nk_property_double(struct nk_context *ctx, const char *text, double min, double *val, double max, double step, double inc_per_pixel);
+/// void nk_property_double(struct nk_context *ctx, const char *name, double min, double *val, double max, double step, double inc_per_pixel);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter           | Description
@@ -3346,7 +3346,7 @@ NK_API void nk_property_double(struct nk_context*, const char *name, double min,
 ///     a `#` at the beginning. It will not be shown but guarantees correct behavior.
 ///
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// int nk_propertyi(struct nk_context *ctx, const char *text, int min, int val, int max, int step, float inc_per_pixel);
+/// int nk_propertyi(struct nk_context *ctx, const char *name, int min, int val, int max, int step, float inc_per_pixel);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter           | Description
@@ -3369,7 +3369,7 @@ NK_API int nk_propertyi(struct nk_context*, const char *name, int min, int val, 
 ///     a `#` at the beginning. It will not be shown but guarantees correct behavior.
 ///
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// float nk_propertyf(struct nk_context *ctx, const char *text, float min, float val, float max, float step, float inc_per_pixel);
+/// float nk_propertyf(struct nk_context *ctx, const char *name, float min, float val, float max, float step, float inc_per_pixel);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter           | Description
@@ -3392,7 +3392,7 @@ NK_API float nk_propertyf(struct nk_context*, const char *name, float min, float
 ///     a `#` at the beginning. It will not be shown but guarantees correct behavior.
 ///
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
-/// float nk_propertyd(struct nk_context *ctx, const char *text, double min, double val, double max, double step, double inc_per_pixel);
+/// float nk_propertyd(struct nk_context *ctx, const char *name, double min, double val, double max, double step, double inc_per_pixel);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// Parameter           | Description
@@ -12210,8 +12210,8 @@ STBTT_DEF unsigned char * stbtt_GetCodepointSDF(const stbtt_fontinfo *info, floa
 
 STBTT_DEF int stbtt_FindMatchingFont(const unsigned char *fontdata, const char *name, int flags);
 /*  returns the offset (not index) of the font that matches, or -1 if none */
-/*    if you use STBTT_MACSTYLE_DONTCARE, use a font text like "Arial Bold". */
-/*    if you use any other flag, use a font text like "Arial"; this checks */
+/*    if you use STBTT_MACSTYLE_DONTCARE, use a font name like "Arial Bold". */
+/*    if you use any other flag, use a font name like "Arial"; this checks */
 /*      the 'macStyle' header field; i don't know if fonts set this consistently */
 #define STBTT_MACSTYLE_DONTCARE     0
 #define STBTT_MACSTYLE_BOLD         1
@@ -12613,9 +12613,9 @@ b = info->cff;
 stbtt__buf_skip(&b, 2);
 stbtt__buf_seek(&b, stbtt__buf_get8(&b)); /*  hdrsize */
 
-/*  @TODO the text INDEX could list multiple fonts, */
+/*  @TODO the name INDEX could list multiple fonts, */
 /*  but we just use the first one. */
-stbtt__cff_get_index(&b);  /*  text INDEX */
+stbtt__cff_get_index(&b);  /*  name INDEX */
 topdictidx = stbtt__cff_get_index(&b);
 topdict = stbtt__cff_index_get(topdictidx, 0);
 stbtt__cff_get_index(&b);  /*  string INDEX */
@@ -15904,7 +15904,7 @@ STBTT_free(bitmap, userdata);
 
 /* //////////////////////////////////////////////////////////////////////////// */
 /*  */
-/*  font text matching -- recommended not to use this */
+/*  font name matching -- recommended not to use this */
 /*  */
 
 /*  check if a utf8 string contains a prefix which is the utf16 string; if so return length of matching utf8 string */
@@ -15959,7 +15959,7 @@ STBTT_DEF const char *stbtt_GetFontNameString(const stbtt_fontinfo *font, int *l
 stbtt_int32 i,count,stringOffset;
 stbtt_uint8 *fc = font->data;
 stbtt_uint32 offset = font->fontstart;
-stbtt_uint32 nm = stbtt__find_table(fc, offset, "text");
+stbtt_uint32 nm = stbtt__find_table(fc, offset, "name");
 if (!nm) return NULL;
 
 count = ttUSHORT(fc+nm+2);
@@ -16034,7 +16034,7 @@ hd = stbtt__find_table(fc, offset, "head");
 if ((ttUSHORT(fc+hd+44) & 7) != (flags & 7)) return 0;
 }
 
-nm = stbtt__find_table(fc, offset, "text");
+nm = stbtt__find_table(fc, offset, "name");
 if (!nm) return 0;
 
 if (flags) {
@@ -19961,7 +19961,7 @@ if (!(win->flags & (NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE)))
 win->bounds = bounds;
 /* If this assert triggers you either:
          *
-         * I.) Have more than one window with the same text or
+         * I.) Have more than one window with the same name or
          * II.) You forgot to actually draw the window.
          *      More specific you did not call `nk_clear` (nk_clear will be
          *      automatically called for you if you are using one of the
@@ -27500,7 +27500,7 @@ style = &ctx->style;
 s = nk_widget(&bounds, ctx);
 if (!s) return;
 
-/* calculate hash from text */
+/* calculate hash from name */
 if (name[0] == '#') {
 hash = nk_murmur_hash(name, (int)nk_strlen(name), win->property.seq++);
 name++; /* special number hash */
@@ -29165,7 +29165,7 @@ nk_tooltip(ctx, buf);
 ///                        or clear each passed buffer after calling nk_convert.
 /// - 2018/02/23 (3.00.6) - Fixed slider dragging behavior.
 /// - 2018/01/31 (3.00.5) - Fixed overcalculation of cursor data in font baking process.
-/// - 2018/01/31 (3.00.4) - Removed text collision with stb_truetype.
+/// - 2018/01/31 (3.00.4) - Removed name collision with stb_truetype.
 /// - 2018/01/28 (3.00.3) - Fixed panel window border drawing bug.
 /// - 2018/01/12 (3.00.2) - Added `nk_group_begin_titled` for separed group identifier and title.
 /// - 2018/01/07 (3.00.1) - Started to change documentation style.
@@ -29185,7 +29185,7 @@ nk_tooltip(ctx, buf);
 /// - 2017/09/14 (2.00.2) - Fixed `nk_edit_buffer` and `nk_edit_focus` behavior.
 /// - 2017/09/14 (2.00.1) - Fixed window closing behavior.
 /// - 2017/09/14 (2.00.0) - BREAKING CHANGE: Modifing window position and size funtions now
-///                        require the text of the window and must happen outside the window
+///                        require the name of the window and must happen outside the window
 ///                        building process (between function call nk_begin and nk_end).
 /// - 2017/09/11 (1.40.9) - Fixed window background flag if background window is declared last_click.
 /// - 2017/08/27 (1.40.8) - Fixed `nk_item_is_any_active` for hidden windows.
@@ -29255,7 +29255,7 @@ nk_tooltip(ctx, buf);
 ///                        offset storage. Main advantage is that you can externalize
 ///                        the memory management for the offset. It could also be helpful
 ///                        if you have a hash collision in `nk_group_begin` but really
-///                        want the text. In addition I added `nk_list_view` which allows
+///                        want the name. In addition I added `nk_list_view` which allows
 ///                        to draw big lists inside a group without actually having to
 ///                        commit the whole list to nuklear (issue #269).
 /// - 2016/10/30 (1.25.1) - Fixed clipping rectangle bug inside `nk_draw_list`.
@@ -29306,10 +29306,10 @@ nk_tooltip(ctx, buf);
 /// - 2016/09/08 (1.19.0) - Added additional asserts to make sure every `nk_xxx_begin` call
 ///                        for windows, popups, combobox, menu and contextual is guarded by
 ///                        `if` condition and does not produce false drawing output.
-/// - 2016/09/08 (1.18.0) - Changed confusing text for `NK_SYMBOL_RECT_FILLED`, `NK_SYMBOL_RECT`
+/// - 2016/09/08 (1.18.0) - Changed confusing name for `NK_SYMBOL_RECT_FILLED`, `NK_SYMBOL_RECT`
 ///                        to hopefully easier to understand `NK_SYMBOL_RECT_FILLED` and
 ///                        `NK_SYMBOL_RECT_OUTLINE`.
-/// - 2016/09/08 (1.17.0) - Changed confusing text for `NK_SYMBOL_CIRLCE_FILLED`, `NK_SYMBOL_CIRCLE`
+/// - 2016/09/08 (1.17.0) - Changed confusing name for `NK_SYMBOL_CIRLCE_FILLED`, `NK_SYMBOL_CIRCLE`
 ///                        to hopefully easier to understand `NK_SYMBOL_CIRCLE_FILLED` and
 ///                        `NK_SYMBOL_CIRCLE_OUTLINE`.
 /// - 2016/09/08 (1.16.0) - Added additional checks to select correct types if `NK_INCLUDE_FIXED_TYPES`
@@ -29342,7 +29342,7 @@ nk_tooltip(ctx, buf);
 /// - 2016/08/29 (1.10.0) - Added additional height parameter to `nk_combobox_xxx`.
 /// - 2016/08/29 (1.10.0) - Fixed drawing bug in dynamic popups.
 /// - 2016/08/29 (1.10.0) - Added experimental mouse scrolling to popups, menus and comboboxes.
-/// - 2016/08/26 (1.10.0) - Added window text string prepresentation to account for
+/// - 2016/08/26 (1.10.0) - Added window name string prepresentation to account for
 ///                        hash collisions. Currently limited to `NK_WINDOW_MAX_NAME`
 ///                        which in term can be redefined if not big enough.
 /// - 2016/08/26 (1.10.0) - Added stacks for temporary style/UI changes in code.
