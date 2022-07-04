@@ -60,7 +60,7 @@ static uJson *append_child(uJson *self, const char *name) {
     *child = (uJson) {0};
     child->a = self->a;
 
-    // copy text if self is an object (not an array)
+    // copy name if self is an object (not an array)
     if (self->type == U_JSON_TYPE_OBJECT) {
         u_json_set_name(child, name);
     }

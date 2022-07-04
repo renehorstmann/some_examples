@@ -67,7 +67,7 @@ static void idbfs_mount() {
     s_log("e_io_idbfs: synced");
 }
 
-// protected, JS need its text as global
+// protected, JS need its name as global
 void e_io_idbfs_synced() {
     s_log_trace("e_io_idbfs_synced");
     L.synced = true;

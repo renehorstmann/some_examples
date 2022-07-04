@@ -80,7 +80,7 @@ bool u_json_save_file(const uJson *self, const char *file);
 // returns the type of a json item
 enum u_json_types u_json_get_type(const uJson *self);
 
-// returns the text of a json item, if available (parent is an object), NULL otherwise
+// returns the name of a json item, if available (parent is an object), NULL otherwise
 const char *u_json_get_name(const uJson *self);
 
 // returns a bool containing the json value, or NULL on missmatch
@@ -98,7 +98,7 @@ int u_json_get_size(const uJson *self);
 // returns an writeable item of the array or object element, or NULL on missmatch
 uJson *u_json_get_id(const uJson *self, int id);
 
-// returns an writeable object element by text, or NULL on missmatch
+// returns an writeable object element by name, or NULL on missmatch
 uJson *u_json_get_object(const uJson *self, const char *name);
 
 
@@ -112,7 +112,7 @@ float *u_json_get_float(const uJson *self, float *out_data);
 double *u_json_get_double(const uJson *self, double *out_data);
 
 
-// resets the text of a child (self) in an object (parent)
+// resets the name of a child (self) in an object (parent)
 void u_json_set_name(uJson *self, const char *name);
 
 // resets the value of a bool item
@@ -145,67 +145,67 @@ bool u_json_set_double(uJson *self, double value);
 
 
 // append a new json "null" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // returns the appended item, or NULL on missmatch
 uJson *u_json_append_null(uJson *self, const char *name);
 
 // append a new json "bool" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // returns the appended item, or NULL on missmatch
 uJson *u_json_append_bool(uJson *self, const char *name, bool value);
 
 // append a new json "num" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // value should contain the string representation of a number (will be checked with strtod)
 // returns the appended item, or NULL on missmatch
 uJson *u_json_append_num(uJson *self, const char *name, const char *value);
 
 // append a new json "bool" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // returns the appended item, or NULL on missmatch
 uJson *u_json_append_string(uJson *self, const char *name, const char *value);
 
 // append a new json "array" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // returns the appended item, or NULL on missmatch
 uJson *u_json_append_array(uJson *self, const char *name);
 
 // append a new json "object" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // returns the appended item, or NULL on missmatch
 uJson *u_json_append_object(uJson *self, const char *name);
 
 // append a new json "num" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // calls u_json_append_num
 // returns the appended item, or NULL on missmatch
 uJson *u_json_append_int(uJson *self, const char *name, int value);
 
 // append a new json "num" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // calls u_json_append_num
 // returns the appended item, or NULL on missmatch
 uJson *u_json_append_float(uJson *self, const char *name, float value);
 
 // append a new json "num" item to an json array or object
-// if self is an array, text is ignored
-// if self is an object and already contains the element text,
+// if self is an array, name is ignored
+// if self is an object and already contains the element name,
 //     the old will be killed and replaced
 // calls u_json_append_num
 // returns the appended item, or NULL on missmatch
@@ -218,7 +218,7 @@ uJson *u_json_append_double(uJson *self, const char *name, double value);
 // returns true on success
 bool u_json_remove_id(uJson *self, int id);
 
-// removes element by text out of an object
+// removes element by name out of an object
 // returns the amount of successfully removed items
 int u_json_remove_objects(uJson *self, const char *name);
 
@@ -227,32 +227,32 @@ int u_json_remove_objects(uJson *self, const char *name);
 // getter shortcuts
 //
 
-// shortcut to get a bool by text from an object
+// shortcut to get a bool by name from an object
 static const bool *u_json_get_object_bool(const uJson *self, const char *name) {
     return u_json_get_bool(u_json_get_object(self, name));
 }
 
-// shortcut to get a num by text from an object
+// shortcut to get a num by name from an object
 static const char *u_json_get_object_num(const uJson *self, const char *name) {
     return u_json_get_num(u_json_get_object(self, name));
 }
 
-// shortcut to get a string by text from an object
+// shortcut to get a string by name from an object
 static const char *u_json_get_object_string(const uJson *self, const char *name) {
     return u_json_get_string(u_json_get_object(self, name));
 }
 
-// shortcut to get an int by text from an object
+// shortcut to get an int by name from an object
 static int *u_json_get_object_int(const uJson *self, const char *name, int *out_data) {
     return u_json_get_int(u_json_get_object(self, name), out_data);
 }
 
-// shortcut to get a float by text from an object
+// shortcut to get a float by name from an object
 static float *u_json_get_object_float(const uJson *self, const char *name, float *out_data) {
     return u_json_get_float(u_json_get_object(self, name), out_data);
 }
 
-// shortcut to get a double by text from an object
+// shortcut to get a double by name from an object
 static double *u_json_get_object_double(const uJson *self, const char *name, double *out_data) {
     return u_json_get_double(u_json_get_object(self, name), out_data);
 }
