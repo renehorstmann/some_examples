@@ -64,4 +64,8 @@ René Horstmann
 
 ## Licence
 
-This project is licensed under the MIT License - see the someLICENSE file for details
+This project is licensed under the MIT License - see the someLICENSE file for details    
+    - [SDL2](https://www.libsdl.org/) (zlib License)
+    - [Emscripten](emscripten.org) (MIT License)
+    - [nuklear](https://github.com/Immediate-Mode-UI/Nuklear) for debug gui windows (MIT License)
+    - [curl](https://curl.se/docs/copyright.html) (MIT like License)
