@@ -6,10 +6,10 @@
 // logging functions
 #include "s/log.h"
 
-// load, save and manipulate images (on web only .png for load and save)
+// load, save and manipulate images
 #include "u/image.h"
 
-// save user data or do up and download for web
+// save user data or do up and download
 #include "e/io.h"
 
 #include "r/ro_text.h"
@@ -67,9 +67,9 @@ static void load_image() {
     ro_single_set_texture(&L.image_ro, tex);
 }
 
-// this callback will be called on a succeeded file upload (web only)
+// this callback will be called on a succeeded file upload
 static void upload_callback(const char *file, bool ascii, const char *user_file_name, void *user_data) {
-    s_log("got a web upload: <%s>", user_file_name);
+    s_log("got an upload: <%s>", user_file_name);
     load_image();
 }
 
@@ -86,7 +86,7 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
                                  false, // ascii file?
                                  upload_callback, NULL);
 
-        // if not on web, just load the image upload.png (must be in the working directory)
+        // if the uploadet is not supported (CxxDroid) just load the image
         load_image();
     }
 
@@ -96,7 +96,7 @@ static void pointer_callback(ePointer_s pointer, void *user_data) {
         // save the current image
         u_image_save_file(L.image, "download.png");
 
-        // web: offer a file download
+        // offer a file download
         e_io_offer_file_as_download("download.png");
     }
 }
