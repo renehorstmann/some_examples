@@ -81,7 +81,7 @@ static void loop() {
         return;
 
     // only set values if the frame is not dropped
-    SDL_GL_GetDrawableSize(e_window.sdl_window, &e_window.size.x, &e_window.size.y);
+    SDL_GetWindowSize(e_window.sdl_window, &e_window.size.x, &e_window.size.y);
     e_window.frame_deltatime = deltatime;
     e_window.frame_deltatime_ms = deltatime_ms;
     e_window.frame_time_ms += deltatime_ms;
@@ -210,12 +210,11 @@ void e_window_init(const char *title) {
 
     // create window
     e_window.sdl_window = SDL_CreateWindow(title,
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            640, 480,
-            SDL_WINDOW_OPENGL
-            | SDL_WINDOW_RESIZABLE
-            | SDL_WINDOW_ALLOW_HIGHDPI
+                                           SDL_WINDOWPOS_UNDEFINED,
+                                           SDL_WINDOWPOS_UNDEFINED,
+                                           640, 480,
+                                           SDL_WINDOW_OPENGL
+                                           | SDL_WINDOW_RESIZABLE
     );
     if (!e_window.sdl_window) {
         s_log_error("SDL_CreateWindow failed: %s", SDL_GetError());
@@ -242,7 +241,7 @@ void e_window_init(const char *title) {
     s_log("Using GLEW version: %s", glewGetString(GLEW_VERSION));
 #endif
 
-    SDL_GL_GetDrawableSize(e_window.sdl_window, &e_window.size.x, &e_window.size.y);
+    SDL_GetWindowSize(e_window.sdl_window, &e_window.size.x, &e_window.size.y);
 
     // call protected function to let web load indexDB database
     e_io_savestate_load();

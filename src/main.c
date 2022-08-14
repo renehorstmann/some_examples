@@ -157,7 +157,7 @@ static void example_select_init() {
     L.info = ro_text_new_font55(256);
 
     L.title = ro_text_new_font55(32);
-    ro_text_set_text(&L.title, "some examples test");
+    ro_text_set_text(&L.title, "some examples");
 
     L.buttons = ro_batch_new(EXAMPLE_NUM, r_texture_new_file(2, 1, "res/big_btn.png"));
 
