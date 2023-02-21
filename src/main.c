@@ -186,13 +186,15 @@ static void example_select_update(float dtime) {
     char buf[256];
     snprintf(buf, sizeof buf,
              "window size:    %i x %i\n"
-             "frames per sec: %.2f",
+             "frames per sec: %5.1f\n"
+             "load:           %5.1f %%",
              wnd_size.x, wnd_size.y,
-             e_simple.fps);
+             e_simple.fps,
+             e_simple.load * 100);
     ro_text_set_text(&L.info, buf);
 
     // text position is (unlike most render objects) in the top left (instead of the centre)
-    u_pose_set_xy(&L.info.pose, -90, 12 + camera.RO.bottom);
+    u_pose_set_xy(&L.info.pose, -90, 18 + camera.RO.bottom);
     u_pose_set_xy(&L.title.pose, -48, 90);
 
     for (int i = 0; i < EXAMPLE_NUM; i++) {
